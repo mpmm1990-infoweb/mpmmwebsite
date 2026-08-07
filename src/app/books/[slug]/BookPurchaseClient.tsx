@@ -1,0 +1,57 @@
+"use client";
+
+import { useState } from "react";
+import { Download, ShoppingCart } from "lucide-react";
+import PaymentModal from "@/components/PaymentModal";
+
+interface BookPurchaseClientProps {
+  bookId: string;
+  bookTitle: string;
+  price: number;
+  isFree: boolean;
+  freePdfUrl?: string;
+}
+
+export default function BookPurchaseClient({
+  bookId,
+  bookTitle,
+  price,
+  isFree,
+  freePdfUrl,
+}: BookPurchaseClientProps) {
+  const [showModal, setShowModal] = useState(false);
+
+  if (isFree && freePdfUrl) {
+    return (
+      <a
+        href={freePdfUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center justify-center gap-3 min-h-[48px] px-6 sm:px-8 py-3.5 sm:py-4 bg-[#006a4e] hover:bg-[#008764] text-white rounded-2xl font-bold font-heading hover:shadow-lg hover:scale-105 transition-all duration-300 border border-white/20 text-sm sm:text-base w-full sm:w-auto"
+      >
+        <Download size={20} className="shrink-0" />
+        <span>ফ্রি পিডিএফ ডাউনলোড করুন</span>
+      </a>
+    );
+  }
+
+  return (
+    <>
+      <button
+        onClick={() => setShowModal(true)}
+        className="inline-flex items-center justify-center gap-3 min-h-[48px] px-6 sm:px-8 py-3.5 sm:py-4 bg-[#f42a41] hover:bg-[#d81e34] text-white rounded-2xl font-bold font-heading hover:shadow-[0_8px_24px_rgba(244,42,65,0.35)] hover:scale-105 transition-all duration-300 border border-white/20 text-sm sm:text-base w-full sm:w-auto"
+      >
+        <ShoppingCart size={20} className="shrink-0" />
+        <span>৳{price} টাকায় ক্রয় করুন</span>
+      </button>
+
+      <PaymentModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        bookTitle={bookTitle}
+        bookId={bookId}
+        price={price}
+      />
+    </>
+  );
+}
