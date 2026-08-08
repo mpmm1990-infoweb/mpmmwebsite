@@ -85,11 +85,11 @@ export async function GET(request: Request) {
       externalLink
     }`;
 
-    let book = await sanityFetch<BookQueryResponse>(directQuery, { slug: bookSlug }, ["book"]);
+    let book: BookQueryResponse | null = await sanityFetch<BookQueryResponse | null>(directQuery, { slug: bookSlug }, ["book"]);
 
-    // Fallback: If direct query misses (e.g. title with case differences or hyphen variations), fetch all books and fuzzy match
+    // Fallback: If direct query missed (due to spacing/case/hyphen differences), scan all books
     if (!book) {
-      console.log(`ℹ️ Direct match missed for "${bookSlug}". Executing fallback list scan...`);
+      console.log(`ℹ️ Direct GROQ match missed for "${bookSlug}". Executing fallback list scan...`);
       const allBooksQuery = `*[(_type == "book" || _type == "digitalLibrary")]{
         _id,
         title,
