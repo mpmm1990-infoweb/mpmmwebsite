@@ -19,17 +19,24 @@ export async function POST(request: Request) {
       );
     }
 
-    // ── 2. SMTP & Environment Config ──────────────────────────────────────────
-    const host = process.env.SMTP_HOST || "smtp.gmail.com";
+    // ── 2. Dynamic Base URL Detection (Auto-detects live domain on Vercel/Production) ──
+    const hostHeader = request.headers.get("host") || "localhost:3000";
+    const protocol = hostHeader.includes("localhost") ? "http" : "https";
+    const detectedBaseUrl = `${protocol}://${hostHeader}`;
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : detectedBaseUrl);
+    const secretKey = process.env.ADMIN_SECRET_KEY || "default-secret-key-1990";
+    
+    // Explicitly pass slug or title fallback cleanly to approve URL
+    const targetSlug = bookSlug || bookTitle;
+    const approveUrl = `${baseUrl}/api/approve-order?email=${encodeURIComponent(email)}&bookSlug=${encodeURIComponent(targetSlug)}&secret=${encodeURIComponent(secretKey)}`;
+
+    // ── 3. SMTP & Environment Config ──────────────────────────────────────────
+    const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
     const port = Number(process.env.SMTP_PORT) || 587;
     const user = process.env.EMAIL_USER || process.env.SMTP_USER || "";
     const pass = (process.env.EMAIL_PASS || process.env.SMTP_PASS || "").replace(/\s+/g, "");
     const adminEmail = process.env.ADMIN_EMAIL || user || "info.mpmm1990@gmail.com";
-
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const secretKey = process.env.ADMIN_SECRET_KEY || "default-secret-key-1990";
-    const targetSlug = bookSlug || bookTitle;
-    const approveUrl = `${baseUrl}/api/approve-order?email=${encodeURIComponent(email)}&bookSlug=${encodeURIComponent(targetSlug)}&secret=${encodeURIComponent(secretKey)}`;
 
     const methodLabel = paymentMethod === "bkash" ? "bKash" : "Nagad";
     const submittedAt = new Date().toLocaleString("bn-BD", {
@@ -46,12 +53,12 @@ export async function POST(request: Request) {
       timeStyle: "short",
     });
 
-    // ── 3. Nodemailer Execution ──────────────────────────────────────────────
+    // ── 4. Nodemailer Execution ──────────────────────────────────────────────
     if (user && pass) {
-      console.log(`✉️ Transporter connecting to ${host}:${port} as ${user}...`);
+      console.log(`✉️ Transporter connecting to ${smtpHost}:${port} as ${user}...`);
 
       const transporter = nodemailer.createTransport({
-        host,
+        host: smtpHost,
         port,
         secure: port === 465,
         auth: { user, pass },
