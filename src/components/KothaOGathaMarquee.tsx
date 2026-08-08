@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { BookOpen, PenTool, PlusCircle, ArrowUpRight } from "lucide-react";
+import { PenTool, PlusCircle, ArrowUpRight } from "lucide-react";
 import { urlFor } from "@/sanity/image";
 import SubmitWordsModal from "./SubmitWordsModal";
 import KothaOGathaDetailModal, { KothaOGathaItem } from "./KothaOGathaDetailModal";
@@ -85,9 +85,16 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<KothaOGathaItem | null>(null);
 
-  const displayList = items && items.length > 0 ? items : fallbackItems;
-  // Duplicate list to guarantee seamless infinite marquee loop
-  const marqueeList = [...displayList, ...displayList, ...displayList];
+  const rawList = items && items.length > 0 ? items : fallbackItems;
+
+  // Ensure base list has at least 6 items so it easily fills wide screens
+  let baseList = [...rawList];
+  while (baseList.length < 6) {
+    baseList = [...baseList, ...rawList];
+  }
+
+  // Exactly 2 equal halves: translateX(-50%) shifts 1st half out and 2nd half into 0 position for a 100% seamless, gapless loop
+  const marqueeList = [...baseList, ...baseList];
 
   return (
     <div className="w-full relative overflow-hidden py-4">
@@ -97,7 +104,7 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
         <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-[#060E1F] to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-[#060E1F] to-transparent z-10 pointer-events-none" />
 
-        <div className="flex gap-6 w-max animate-marquee group-hover:[animation-play-state:paused]">
+        <div className="flex gap-6 w-max animate-marquee group-hover:[animation-play-state:paused] pointer-events-auto">
           {marqueeList.map((item, idx) => {
             const badge = categoryBadgeStyles[item.category || "story"] || categoryBadgeStyles.story;
 
@@ -105,7 +112,7 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
               <div
                 key={`${item._id}-${idx}`}
                 onClick={() => setSelectedItem(item)}
-                className="w-72 sm:w-80 shrink-0 glass-panel glass-panel-hover p-6 rounded-3xl border border-[#D4AF37]/25 shadow-heritage cursor-pointer transition-all duration-300 flex flex-col justify-between group/card hover:border-[#D4AF37]/60"
+                className="w-72 sm:w-80 shrink-0 flex-shrink-0 glass-panel glass-panel-hover p-6 rounded-3xl border border-[#D4AF37]/25 shadow-heritage cursor-pointer transition-all duration-300 flex flex-col justify-between group/card hover:border-[#D4AF37]/60"
               >
                 <div>
                   {/* Top Bar: Category Badge & Open Action */}
@@ -120,17 +127,17 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
                     </div>
                   </div>
 
-                  {/* Strictly Title Only (No long text to break layout) */}
+                  {/* Title */}
                   <h3 className="text-white font-bold text-lg sm:text-xl font-heading leading-snug line-clamp-2 group-hover/card:text-[#D4AF37] transition-colors">
                     <span className="lang-bn-only">{item.titleBn || item.title}</span>
                     <span className="lang-en-only">{item.title || item.titleBn}</span>
                   </h3>
                 </div>
 
-                {/* Author Info: Name & Designation Only */}
+                {/* Author Info */}
                 <div className="mt-6 pt-4 border-t border-white/10 flex items-center gap-3">
                   {item.photo?.asset ? (
-                    <div className="w-10 h-10 rounded-full overflow-hidden relative border border-[#D4AF37]/50 shrink-0">
+                    <div className="w-10 h-10 rounded-full overflow-hidden relative border border-[#D4AF37]/50 shrink-0 flex-shrink-0">
                       <Image
                         src={urlFor(item.photo).width(100).height(100).url()}
                         alt={item.name || ""}
@@ -139,7 +146,7 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
                       />
                     </div>
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#006a4e] to-[#0B1B3D] border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] font-bold font-heading text-sm shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#006a4e] to-[#0B1B3D] border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] font-bold font-heading text-sm shrink-0 flex-shrink-0">
                       {(item.nameBn || item.name || "?").charAt(0)}
                     </div>
                   )}
