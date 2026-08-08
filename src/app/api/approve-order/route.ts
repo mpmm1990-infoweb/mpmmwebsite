@@ -19,14 +19,14 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get("email");
-    const bookSlug = searchParams.get("bookSlug");
+    const rawBookSlug = searchParams.get("bookSlug");
     const secret = searchParams.get("secret");
 
     const expectedSecret = process.env.ADMIN_SECRET_KEY || "default-secret-key-1990";
 
     // ── 1. Security Authorization Check ──────────────────────────────────────
     if (!secret || secret !== expectedSecret) {
-      console.warn("⛔ Unauthorized attempt to approve order:", { email, bookSlug, secret });
+      console.warn("⛔ Unauthorized attempt to approve order:", { email, bookSlug: rawBookSlug, secret });
       return new NextResponse(
         `<!DOCTYPE html>
         <html lang="en">
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
       );
     }
 
-    if (!email || !bookSlug) {
+    if (!email || !rawBookSlug) {
       return new NextResponse(
         `<!DOCTYPE html>
         <html lang="en">
@@ -70,8 +70,11 @@ export async function GET(request: Request) {
       );
     }
 
-    // ── 2. Fetch Book, PDF Asset URL & External Link from Sanity CMS ─────────
-    const query = `*[_type == "book" && (slug.current == $slug || _id == $slug)][0]{
+    const bookSlug = decodeURIComponent(rawBookSlug).trim();
+
+    // ── 2. Foolproof Sanity Fetch (Slug, Title, TitleBn, or ID Match) ──────────
+    // First: Direct GROQ Query across 'book' and 'digitalLibrary' schema types
+    const directQuery = `*[(_type == "book" || _type == "digitalLibrary") && (slug.current == $slug || title == $slug || titleBn == $slug || _id == $slug)][0]{
       _id,
       title,
       titleBn,
@@ -82,14 +85,41 @@ export async function GET(request: Request) {
       externalLink
     }`;
 
-    const book = await sanityFetch<BookQueryResponse>(query, { slug: bookSlug }, ["book"]);
-    const pdfAssetUrl = book?.pdfFile?.asset?.url;
+    let book = await sanityFetch<BookQueryResponse>(directQuery, { slug: bookSlug }, ["book"]);
 
+    // Fallback: If direct query misses (e.g. title with case differences or hyphen variations), fetch all books and fuzzy match
+    if (!book) {
+      console.log(`ℹ️ Direct match missed for "${bookSlug}". Executing fallback list scan...`);
+      const allBooksQuery = `*[(_type == "book" || _type == "digitalLibrary")]{
+        _id,
+        title,
+        titleBn,
+        slug,
+        pdfFile{
+          asset->{url}
+        },
+        externalLink
+      }`;
+      const allBooks = await sanityFetch<BookQueryResponse[]>(allBooksQuery, {}, ["book"]);
+      
+      const normalizedTarget = bookSlug.toLowerCase().replace(/[\s\-_]+/g, "");
+      
+      book = allBooks.find((b) => {
+        const s = (b.slug?.current || "").toLowerCase().replace(/[\s\-_]+/g, "");
+        const t = (b.title || "").toLowerCase().replace(/[\s\-_]+/g, "");
+        const tb = (b.titleBn || "").toLowerCase().replace(/[\s\-_]+/g, "");
+        const id = (b._id || "").toLowerCase().replace(/[\s\-_]+/g, "");
+        
+        return s === normalizedTarget || t === normalizedTarget || tb === normalizedTarget || id === normalizedTarget;
+      }) || null;
+    }
+
+    const pdfAssetUrl = book?.pdfFile?.asset?.url;
     // Flexible Delivery Link (External Drive Link takes priority if set, otherwise uploaded PDF file)
     const finalDownloadLink = book?.externalLink || pdfAssetUrl;
 
     if (!book || !finalDownloadLink) {
-      console.warn("⚠️ Neither PDF file nor external link found for book in Sanity:", { bookSlug, foundBook: !!book });
+      console.warn("⚠️ Neither PDF file nor external link found for book in Sanity:", { bookSlug, foundBook: !!book, bookTitle: book?.title });
       return new NextResponse(
         `<!DOCTYPE html>
         <html lang="bn">
@@ -103,7 +133,7 @@ export async function GET(request: Request) {
             </p>
             <div style="background:rgba(244,42,65,0.1);border:1px solid rgba(244,42,65,0.3);border-radius:12px;padding:14px;">
               <p style="color:#C2CFC8;font-size:12px;margin:0;">
-                Sanity Studio-তে "<strong>${bookSlug}</strong>" বইটির 'পিডিএফ ফাইল আপলোড' অথবা 'বইয়ের ড্রাইভ/ডাউনলোড লিংক' ফিল্ডটি পূরণ করুন।
+                Sanity Studio-তে "<strong>${book?.title || bookSlug}</strong>" বইটির 'পিডিএফ ফাইল আপলোড' অথবা 'বইয়ের ড্রাইভ/ডাউনলোড লিংক' ফিল্ডটি পূরণ করুন।
               </p>
             </div>
           </div>

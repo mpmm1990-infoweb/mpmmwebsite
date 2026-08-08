@@ -208,8 +208,8 @@ export default function PaymentModal({
                         <strong className="text-[#D4AF37]">৳{price}</strong> সেন্ড মানি করুন,
                         তারপর নিচের ফর্মটি পূরণ করুন।
                       </p>
-                      <p className="text-white/50 text-[11px]">
-                        পেমেন্ট যাচাইয়ের পর আপনার ইমেইলে বইটি পাঠানো হবে।
+                      <p className="text-[#D4AF37]/80 text-[11px]">
+                        পেমেন্ট যাচাইয়ের পর ১-ক্লিকে ইমেইলে ডাউনলোড লিংক পাঠানো হবে।
                       </p>
                     </div>
                   </div>
@@ -231,7 +231,7 @@ export default function PaymentModal({
                       placeholder="your@email.com"
                     />
                     <p className="text-white/40 text-[11px] mt-1 font-heading">
-                      এই ইমেইলে বইটির পিডিএফ পাঠানো হবে।
+                      এই ইমেইলে বইটির ডাউনলোড লিংক পাঠানো হবে।
                     </p>
                   </div>
 

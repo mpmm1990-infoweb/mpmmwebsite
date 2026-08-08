@@ -222,6 +222,7 @@ export default async function BookDetailPage({
                 <div className="pt-2">
                   <BookPurchaseClient
                     bookId={book._id}
+                    bookSlug={book.slug?.current || slug}
                     bookTitle={book.title || ""}
                     bookTitleBn={book.titleBn || book.title || ""}
                     price={book.price || 0}
@@ -258,7 +259,7 @@ export default async function BookDetailPage({
 
             {/* ─── RIGHT COLUMN: Related Books Sidebar (span 3) ─── */}
             <div className="lg:col-span-3">
-              <div className="bg-[#060E1F]/80 backdrop-blur-md rounded-3xl border border-[#D4AF37]/20 p-5 shadow-xl sticky top-24">
+              <div className="bg-[#060E1F]/80 backdrop-blur-md rounded-[#D4AF37]/20 p-5 shadow-xl sticky top-24">
                 <h3 className="font-heading font-bold text-[#D4AF37] text-sm uppercase tracking-widest mb-4 pb-3 border-b border-[#D4AF37]/20">
                   <span className="lang-bn-only">এ জাতীয় আরও বই</span>
                   <span className="lang-en-only">Related Books</span>
