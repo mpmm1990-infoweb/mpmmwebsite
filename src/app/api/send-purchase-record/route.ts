@@ -6,19 +6,25 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { bookTitle, bookTitleBn, email, phone, paymentMethod, paymentRef, amount } = body;
 
-    // ── Validation ──────────────────────────────────────────────────────────
+    console.log("--------------------------------------------------");
+    console.log("📨 RECEIVING PURCHASE RECORD SUBMISSION:");
+    console.log({ bookTitle, email, phone, paymentMethod, paymentRef, amount });
+
+    // ── 1. Validation ────────────────────────────────────────────────────────
     if (!bookTitle || !email || !phone || !paymentMethod || !paymentRef || !amount) {
+      console.warn("⚠️ Validation failed: Missing required fields.");
       return NextResponse.json(
-        { error: "Missing required fields for email record." },
+        { success: false, error: "Missing required fields for purchase record." },
         { status: 400 }
       );
     }
 
-    // ── SMTP Config ──────────────────────────────────────────────────────────
+    // ── 2. SMTP & Environment Config ──────────────────────────────────────────
     const host = process.env.SMTP_HOST || "smtp.gmail.com";
     const port = Number(process.env.SMTP_PORT) || 587;
-    const user = process.env.SMTP_USER || "";
-    const pass = (process.env.SMTP_PASS || "").replace(/\s+/g, "");
+    // Check EMAIL_USER/EMAIL_PASS first, with fallbacks to SMTP_USER/SMTP_PASS
+    const user = process.env.EMAIL_USER || process.env.SMTP_USER || "";
+    const pass = (process.env.EMAIL_PASS || process.env.SMTP_PASS || "").replace(/\s+/g, "");
     const adminEmail = process.env.ADMIN_EMAIL || user || "info.mpmm1990@gmail.com";
 
     const methodLabel = paymentMethod === "bkash" ? "bKash" : "Nagad";
@@ -36,17 +42,21 @@ export async function POST(request: Request) {
       timeStyle: "short",
     });
 
+    // ── 3. Nodemailer Execution ──────────────────────────────────────────────
     if (user && pass) {
+      console.log(`✉️ Transporter connecting to ${host}:${port} as ${user}...`);
+
       const transporter = nodemailer.createTransport({
         host,
         port,
         secure: port === 465,
         auth: { user, pass },
+        tls: {
+          rejectUnauthorized: false, // Prevents SSL certificate validation issues on Node
+        },
       });
 
-      // ────────────────────────────────────────────────────────────────────────
-      // EMAIL 1: Auto-responder → USER
-      // ────────────────────────────────────────────────────────────────────────
+      // EMAIL 1: Confirmation Email to Customer
       const userMailOptions = {
         from: `"আধুনিক পুলিশ স্মৃতি জাদুঘর" <${user}>`,
         to: email,
@@ -143,9 +153,7 @@ export async function POST(request: Request) {
         `,
       };
 
-      // ────────────────────────────────────────────────────────────────────────
-      // EMAIL 2: Alert → ADMIN
-      // ────────────────────────────────────────────────────────────────────────
+      // EMAIL 2: Alert Email to Admin
       const adminMailOptions = {
         from: `"Museum Purchase System" <${user}>`,
         to: adminEmail,
@@ -226,16 +234,18 @@ export async function POST(request: Request) {
         `,
       };
 
-      // Fire both emails simultaneously
+      // Dispatch both emails
       await Promise.all([
         transporter.sendMail(userMailOptions),
         transporter.sendMail(adminMailOptions),
       ]);
+
+      console.log("✅ Purchase notification emails sent successfully to user and admin.");
     } else {
-      // Mock mode — log instead of sending
-      console.log("[MOCK] Purchase record emails would be sent:", {
-        to_user: email,
-        to_admin: adminEmail,
+      console.warn("⚠️ EMAIL_USER / EMAIL_PASS or SMTP_USER / SMTP_PASS environment variables are missing!");
+      console.log("ℹ️ [MOCK EMAIL MODE ACTIVATED]:", {
+        userEmail: email,
+        adminEmail,
         bookTitle,
         amount,
         paymentMethod,
@@ -246,12 +256,15 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Purchase emails sent successfully.",
+      message: "Purchase record processed and emails sent successfully.",
     });
-  } catch (error) {
-    console.error("Purchase email error:", error);
+  } catch (error: any) {
+    console.error("❌ CRITICAL SERVER ERROR in /api/send-purchase-record:", error);
     return NextResponse.json(
-      { error: "Failed to send purchase notification emails." },
+      {
+        success: false,
+        error: error?.message || "Internal server error occurred while sending purchase notification email.",
+      },
       { status: 500 }
     );
   }

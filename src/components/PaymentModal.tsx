@@ -64,24 +64,28 @@ export default function PaymentModal({
     setStep("processing");
 
     try {
-      // Step 1: Save order to Supabase
-      const purchaseRes = await fetch("/api/purchase", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          bookId,
-          bookTitle,
-          email: formData.email,
-          phone: formData.phone,
-          paymentMethod: formData.paymentMethod,
-          paymentRef: formData.paymentRef.trim(),
-          amount: price,
-        }),
-      });
+      // Step 1: Save order to database (non-blocking if DB table is uninitialized)
+      try {
+        const purchaseRes = await fetch("/api/purchase", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            bookId,
+            bookTitle,
+            email: formData.email,
+            phone: formData.phone,
+            paymentMethod: formData.paymentMethod,
+            paymentRef: formData.paymentRef.trim(),
+            amount: price,
+          }),
+        });
 
-      if (!purchaseRes.ok) {
-        const err = await purchaseRes.json().catch(() => ({}));
-        throw new Error(err?.error || "Purchase save failed");
+        if (!purchaseRes.ok) {
+          const err = await purchaseRes.json().catch(() => ({}));
+          console.warn("Database purchase record save warning:", err);
+        }
+      } catch (dbErr) {
+        console.warn("Database purchase record save non-blocking warning:", dbErr);
       }
 
       // Step 2: Send dual emails (user confirmation + admin alert)
@@ -99,17 +103,18 @@ export default function PaymentModal({
         }),
       });
 
-      // Email sending failure is non-blocking — order is already saved
-      if (!emailRes.ok) {
-        console.warn("Email sending failed, but order was saved.");
+      const emailData = await emailRes.json().catch(() => ({}));
+
+      if (!emailRes.ok || emailData.success === false) {
+        throw new Error(emailData?.error || emailData?.message || "পেমেন্ট তথ্য সাবমিট করতে সমস্যা হয়েছে।");
       }
 
       setStep("success");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Payment submission error:", err);
       setStep("form");
       setErrorMsg(
-        "সাবমিট করতে সমস্যা হয়েছে। ইন্টারনেট কানেকশন চেক করে আবার চেষ্টা করুন।"
+        err?.message || "সাবমিট করতে সমস্যা হয়েছে। ইন্টারনেট কানেকশন চেক করে আবার চেষ্টা করুন।"
       );
     }
   };
@@ -171,7 +176,7 @@ export default function PaymentModal({
                   ৳{price}
                 </span>
                 <span className="text-white/50 text-xs font-heading">
-                  সেন্ড মানি
+                  সহজ পেমেন্ট
                 </span>
               </div>
             </div>
@@ -258,15 +263,17 @@ export default function PaymentModal({
                           onClick={() =>
                             setFormData({ ...formData, paymentMethod: method })
                           }
-                          className={`px-4 py-3 min-h-[46px] rounded-2xl border text-sm font-bold transition-all font-heading ${
+                          className={`px-4 py-3 min-h-[46px] rounded-2xl border text-sm font-bold transition-all font-heading flex items-center justify-center ${
                             formData.paymentMethod === method
                               ? method === "bkash"
-                                ? "border-[#E2136E] bg-[#E2136E]/20 text-white shadow-md"
-                                : "border-[#F68A1E] bg-[#F68A1E]/20 text-white shadow-md"
-                              : "border-white/20 bg-white/5 text-white/60 hover:bg-white/10"
+                                ? "border-[#E2136E] bg-[#E2136E]/20 text-[#E2136E] shadow-md"
+                                : "border-[#F68A1E] bg-[#F68A1E]/20 text-[#F68A1E] shadow-md"
+                              : method === "bkash"
+                                ? "border-white/20 bg-white/5 text-white/70 hover:border-[#E2136E] hover:text-[#E2136E] hover:bg-[#E2136E]/10"
+                                : "border-white/20 bg-white/5 text-white/70 hover:border-[#F68A1E] hover:text-[#F68A1E] hover:bg-[#F68A1E]/10"
                           }`}
                         >
-                          {method === "bkash" ? "🩷 bKash" : "🧡 Nagad"}
+                          {method === "bkash" ? "bKash" : "Nagad"}
                         </button>
                       ))}
                     </div>

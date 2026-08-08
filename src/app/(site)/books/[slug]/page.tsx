@@ -155,7 +155,7 @@ export default async function BookDetailPage({
             <div className="lg:col-span-6">
               <div className="bg-[#0B1B3D]/80 backdrop-blur-md rounded-3xl border border-[#D4AF37]/20 p-6 sm:p-8 shadow-2xl space-y-6">
 
-                {/* Title */}
+                {/* Title & Primary Author Info */}
                 <div>
                   <h2 className="font-heading text-2xl sm:text-3xl font-bold text-white leading-snug">
                     <span className="lang-bn-only">{book.titleBn || book.title}</span>
@@ -170,7 +170,7 @@ export default async function BookDetailPage({
                   )}
                 </div>
 
-                {/* Price */}
+                {/* Price & Easy Payment Badge */}
                 <div className="flex items-center gap-4">
                   <span className={`text-4xl sm:text-5xl font-heading font-bold ${book.isFree ? "text-[#006a4e]" : "text-[#D4AF37]"}`}>
                     {book.isFree ? (
@@ -184,26 +184,14 @@ export default async function BookDetailPage({
                   </span>
                   {!book.isFree && (
                     <span className="text-[#C2CFC8] text-xs font-heading border border-[#D4AF37]/30 px-3 py-1 rounded-full bg-[#D4AF37]/10">
-                      <span className="lang-bn-only">সেন্ড মানি করুন</span>
-                      <span className="lang-en-only">Manual Payment</span>
+                      <span className="lang-bn-only">সহজ পেমেন্ট</span>
+                      <span className="lang-en-only">Easy Payment</span>
                     </span>
                   )}
                 </div>
 
-                {/* Detail Badges */}
+                {/* Detail Badges (Author removed to prevent duplicate display) */}
                 <div className="flex flex-wrap gap-3">
-                  {book.author && (
-                    <div className="flex items-center gap-2 bg-white/5 border border-[#D4AF37]/25 px-4 py-2.5 rounded-2xl">
-                      <User size={14} className="text-[#D4AF37] shrink-0" />
-                      <div>
-                        <p className="text-[10px] text-[#C2CFC8] font-heading uppercase tracking-wider">
-                          <span className="lang-bn-only">লেখক</span>
-                          <span className="lang-en-only">Author</span>
-                        </p>
-                        <p className="text-xs sm:text-sm font-bold text-white font-heading">{book.author}</p>
-                      </div>
-                    </div>
-                  )}
                   {book.publishYear && (
                     <div className="flex items-center gap-2 bg-white/5 border border-[#D4AF37]/25 px-4 py-2.5 rounded-2xl">
                       <CalendarDays size={14} className="text-[#D4AF37] shrink-0" />
