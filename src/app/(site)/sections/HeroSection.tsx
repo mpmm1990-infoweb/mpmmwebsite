@@ -34,7 +34,7 @@ export default function HeroSection({ data }: { data: HeroData | null }) {
   const subtitleBn = data?.subtitleBn || "প্রথম ব্যাচ — ১৯৯০";
   const ctaText = data?.ctaText || "Explore Our History";
   const ctaTextBn = data?.ctaTextBn || "আমাদের ঐতিহ্য উন্মোচন করুন";
-  const ctaLink = data?.ctaLink || "/history";
+  const ctaLink = data?.ctaLink || "/about-us";
 
   // Build images array
   const rawBgImages = data?.bgImages && data.bgImages.length > 0

@@ -74,7 +74,7 @@ export default function HistoryPreview({
 
                 <div className="pt-2">
                   <Link
-                    href="/history"
+                    href="/about-us"
                     className="inline-flex items-center gap-3 min-h-[48px] px-6 sm:px-8 py-3.5 bg-[#f42a41] hover:bg-[#d81e34] text-white rounded-2xl font-bold font-heading text-sm sm:text-base shadow-[0_8px_24px_rgba(244,42,65,0.35)] hover:scale-105 transition-all duration-300 group border border-white/20"
                   >
                     <span className="lang-bn-only">সম্পূর্ণ ইতিহাস পড়ুন</span>

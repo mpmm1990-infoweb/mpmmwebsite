@@ -104,7 +104,6 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
 
   const isPaused = useRef(false);
   const isDragging = useRef(false);
-  const dragDistance = useRef(0);
 
   // Measure half of the marquee width dynamically
   useEffect(() => {
@@ -159,16 +158,14 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
           dragConstraints={{ left: -100000, right: 100000 }}
           onDragStart={() => {
             isDragging.current = true;
-            dragDistance.current = 0;
           }}
           onDrag={(_, info) => {
-            dragDistance.current += Math.abs(info.delta.x);
             handleDrag();
           }}
           onDragEnd={() => {
             setTimeout(() => {
               isDragging.current = false;
-            }, 80);
+            }, 150);
           }}
           onMouseEnter={() => {
             isPaused.current = true;
@@ -192,7 +189,7 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
               <div
                 key={`${item._id}-${idx}`}
                 onClick={() => {
-                  if (dragDistance.current < 8) {
+                  if (!isDragging.current) {
                     setSelectedItem(item);
                   }
                 }}

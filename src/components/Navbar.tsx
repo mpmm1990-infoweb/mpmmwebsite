@@ -26,11 +26,11 @@ interface NavbarProps {
 
 const defaultNavLinks: NavLink[] = [
   { label: "Home", labelBn: "হোম", href: "/" },
-  { label: "About Us", labelBn: "আমাদের সম্পর্কে", href: "/history" },
+  { label: "About Us", labelBn: "আমাদের সম্পর্কে", href: "/about-us" },
   { label: "Videos", labelBn: "ভিডিও", href: "/videos" },
   { label: "Library", labelBn: "লাইব্রেরি", href: "/books" },
   { label: "Gallery", labelBn: "গ্যালারি", href: "/gallery" },
-  { label: "Words & Verses", labelBn: "কথা ও গাথা", href: "/members" },
+  { label: "Words & Verses", labelBn: "কথা ও গাথা", href: "/words-and-verses" },
 ];
 
 export default function Navbar({

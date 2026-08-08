@@ -55,11 +55,11 @@ export default function Footer({
               <ul className="space-y-3">
                 {[
                   { href: "/", labelBn: "হোম", labelEn: "Home" },
-                  { href: "/history", labelBn: "আমাদের সম্পর্কে", labelEn: "About Us" },
+                  { href: "/about-us", labelBn: "আমাদের সম্পর্কে", labelEn: "About Us" },
                   { href: "/videos", labelBn: "ভিডিও আর্কাইভ", labelEn: "Video Archive" },
                   { href: "/books", labelBn: "ডিজিটাল লাইব্রেরি", labelEn: "Digital Library" },
                   { href: "/gallery", labelBn: "ঐতিহাসিক গ্যালারি", labelEn: "Historical Gallery" },
-                  { href: "/members", labelBn: "জীবনের গল্প ও সদস্যগণ", labelEn: "Journeys & Members" },
+                  { href: "/words-and-verses", labelBn: "কথা ও গাথা", labelEn: "Words & Verses" },
                 ].map((link) => (
                   <li key={link.href}>
                     <Link

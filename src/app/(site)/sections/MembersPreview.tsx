@@ -24,7 +24,7 @@ export default function MembersPreview({ data }: { data: unknown[] }) {
         {/* View All Kotha & Gatha Page Link */}
         <ScrollReveal className="text-center mt-12 sm:mt-14">
           <Link
-            href="/members"
+            href="/words-and-verses"
             className="inline-flex items-center gap-3 min-h-[48px] px-8 py-4 bg-white/10 hover:bg-[#006a4e] text-white rounded-full font-bold font-heading text-base hover:shadow-lg hover:scale-105 transition-all duration-300 group border border-[#D4AF37]/30"
           >
             <span className="font-heading lang-bn-only">সকল কবিতা ও গল্প দেখুন</span>
