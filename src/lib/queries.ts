@@ -5,7 +5,11 @@ export const GLOBAL_SETTINGS_QUERY = `*[_type == "globalSettings"][0]{
   siteTitleBn,
   siteDescription,
   logo,
-  favicon,
+  favicon{
+    asset->{
+      url
+    }
+  },
   ogImage,
   navLinks[]{
     label,

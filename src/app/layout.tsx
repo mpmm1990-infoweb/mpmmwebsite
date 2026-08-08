@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter, Noto_Serif_Bengali } from "next/font/google";
 import { sanityFetch } from "@/sanity/client";
-import { urlFor } from "@/sanity/image";
 import { GLOBAL_SETTINGS_QUERY } from "@/lib/queries";
 import "./globals.css";
 
@@ -24,17 +23,26 @@ const notoSerifBengali = Noto_Serif_Bengali({
   weight: ["400", "700"],
 });
 
+interface GlobalSettingsData {
+  siteTitle?: string;
+  siteTitleBn?: string;
+  siteDescription?: string;
+  favicon?: {
+    asset?: {
+      url?: string;
+    };
+  };
+}
+
 export async function generateMetadata(): Promise<Metadata> {
-  let settings: any = null;
+  let settings: GlobalSettingsData | null = null;
   try {
-    settings = await sanityFetch(GLOBAL_SETTINGS_QUERY, {}, ["globalSettings"]);
+    settings = await sanityFetch<GlobalSettingsData>(GLOBAL_SETTINGS_QUERY, {}, ["globalSettings"]);
   } catch {
     // fallback
   }
 
-  const faviconUrl = settings?.favicon?.asset
-    ? urlFor(settings.favicon).width(64).height(64).url()
-    : undefined;
+  const faviconUrl = settings?.favicon?.asset?.url || undefined;
 
   return {
     title: settings?.siteTitle
@@ -52,25 +60,43 @@ export async function generateMetadata(): Promise<Metadata> {
     ],
     icons: faviconUrl
       ? {
-          icon: faviconUrl,
-          shortcut: faviconUrl,
-          apple: faviconUrl,
+          icon: [{ url: faviconUrl }],
+          shortcut: [{ url: faviconUrl }],
+          apple: [{ url: faviconUrl }],
         }
       : undefined,
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  let settings: GlobalSettingsData | null = null;
+  try {
+    settings = await sanityFetch<GlobalSettingsData>(GLOBAL_SETTINGS_QUERY, {}, ["globalSettings"]);
+  } catch {
+    // fallback
+  }
+
+  const faviconUrl = settings?.favicon?.asset?.url;
+
   return (
     <html
       lang="bn"
       data-lang="bn"
       className={`${playfair.variable} ${inter.variable} ${notoSerifBengali.variable} h-full overflow-x-hidden`}
     >
+      <head>
+        {faviconUrl && (
+          <>
+            <link rel="icon" href={faviconUrl} sizes="any" />
+            <link rel="shortcut icon" href={faviconUrl} />
+            <link rel="apple-touch-icon" href={faviconUrl} />
+          </>
+        )}
+      </head>
       <body className="min-h-full flex flex-col antialiased overflow-x-hidden w-full max-w-full">
         {children}
       </body>
