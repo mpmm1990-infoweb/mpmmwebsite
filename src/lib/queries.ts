@@ -119,6 +119,17 @@ export const BOOK_BY_SLUG_QUERY = `*[_type == "book" && slug.current == $slug][0
   pageCount
 }`;
 
+export const RELATED_BOOKS_QUERY = `*[_type == "book" && slug.current != $slug] | order(order asc)[0...4]{
+  _id,
+  title,
+  titleBn,
+  slug,
+  coverImage,
+  price,
+  isFree,
+  author
+}`;
+
 export const GALLERY_QUERY = `*[_type == "galleryImage"] | order(order asc){
   _id,
   image,
