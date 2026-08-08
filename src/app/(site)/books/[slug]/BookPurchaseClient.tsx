@@ -6,17 +6,17 @@ import PaymentModal from "@/components/PaymentModal";
 
 interface BookPurchaseClientProps {
   bookId: string;
+  bookSlug?: string;
   bookTitle: string;
   bookTitleBn?: string;
   price: number;
   isFree: boolean;
-  // NOTE: freePdfUrl is intentionally NOT accepted as a prop.
-  // Free books are handled server-side via /api/download/[id] to keep PDF URLs off the client.
-  downloadId?: string; // Supabase-signed download ID for free books
+  downloadId?: string;
 }
 
 export default function BookPurchaseClient({
   bookId,
+  bookSlug,
   bookTitle,
   bookTitleBn,
   price,
@@ -60,6 +60,7 @@ export default function BookPurchaseClient({
         bookTitle={bookTitle}
         bookTitleBn={bookTitleBn}
         bookId={bookId}
+        bookSlug={bookSlug}
         price={price}
       />
     </>

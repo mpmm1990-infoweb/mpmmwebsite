@@ -19,6 +19,7 @@ interface PaymentModalProps {
   bookTitle: string;
   bookTitleBn?: string;
   bookId: string;
+  bookSlug?: string;
   price: number;
 }
 
@@ -28,6 +29,7 @@ export default function PaymentModal({
   bookTitle,
   bookTitleBn,
   bookId,
+  bookSlug,
   price,
 }: PaymentModalProps) {
   const [step, setStep] = useState<"form" | "processing" | "success">("form");
@@ -95,6 +97,7 @@ export default function PaymentModal({
         body: JSON.stringify({
           bookTitle,
           bookTitleBn: bookTitleBn || bookTitle,
+          bookSlug: bookSlug || bookId,
           email: formData.email,
           phone: formData.phone,
           paymentMethod: formData.paymentMethod,

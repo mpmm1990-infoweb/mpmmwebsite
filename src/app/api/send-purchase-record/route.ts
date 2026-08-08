@@ -4,11 +4,11 @@ import nodemailer from "nodemailer";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { bookTitle, bookTitleBn, email, phone, paymentMethod, paymentRef, amount } = body;
+    const { bookTitle, bookTitleBn, bookSlug, email, phone, paymentMethod, paymentRef, amount } = body;
 
     console.log("--------------------------------------------------");
     console.log("📨 RECEIVING PURCHASE RECORD SUBMISSION:");
-    console.log({ bookTitle, email, phone, paymentMethod, paymentRef, amount });
+    console.log({ bookTitle, bookSlug, email, phone, paymentMethod, paymentRef, amount });
 
     // ── 1. Validation ────────────────────────────────────────────────────────
     if (!bookTitle || !email || !phone || !paymentMethod || !paymentRef || !amount) {
@@ -22,10 +22,14 @@ export async function POST(request: Request) {
     // ── 2. SMTP & Environment Config ──────────────────────────────────────────
     const host = process.env.SMTP_HOST || "smtp.gmail.com";
     const port = Number(process.env.SMTP_PORT) || 587;
-    // Check EMAIL_USER/EMAIL_PASS first, with fallbacks to SMTP_USER/SMTP_PASS
     const user = process.env.EMAIL_USER || process.env.SMTP_USER || "";
     const pass = (process.env.EMAIL_PASS || process.env.SMTP_PASS || "").replace(/\s+/g, "");
     const adminEmail = process.env.ADMIN_EMAIL || user || "info.mpmm1990@gmail.com";
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const secretKey = process.env.ADMIN_SECRET_KEY || "default-secret-key-1990";
+    const targetSlug = bookSlug || bookTitle;
+    const approveUrl = `${baseUrl}/api/approve-order?email=${encodeURIComponent(email)}&bookSlug=${encodeURIComponent(targetSlug)}&secret=${encodeURIComponent(secretKey)}`;
 
     const methodLabel = paymentMethod === "bkash" ? "bKash" : "Nagad";
     const submittedAt = new Date().toLocaleString("bn-BD", {
@@ -52,7 +56,7 @@ export async function POST(request: Request) {
         secure: port === 465,
         auth: { user, pass },
         tls: {
-          rejectUnauthorized: false, // Prevents SSL certificate validation issues on Node
+          rejectUnauthorized: false,
         },
       });
 
@@ -153,7 +157,7 @@ export async function POST(request: Request) {
         `,
       };
 
-      // EMAIL 2: Alert Email to Admin
+      // EMAIL 2: Alert Email to Admin with 1-Click Magic Link
       const adminMailOptions = {
         from: `"Museum Purchase System" <${user}>`,
         to: adminEmail,
@@ -177,8 +181,17 @@ export async function POST(request: Request) {
               <!-- Details -->
               <div style="padding:28px;">
                 
+                <!-- 1-Click Magic Approve CTA Button -->
+                <div style="background:rgba(0,106,78,0.15);border:2px solid #006a4e;border-radius:14px;padding:20px;margin-bottom:24px;text-align:center;">
+                  <p style="color:#4CAF50;font-weight:bold;font-size:14px;margin:0 0 6px 0;text-transform:uppercase;letter-spacing:0.5px;">⚡ 1-Click Magic Approve & PDF Delivery</p>
+                  <p style="color:#E0E8E3;font-size:13px;margin:0 0 16px 0;">Verify payment in your ${methodLabel} app. Once verified, click below to instantly email the PDF download link to the customer.</p>
+                  <a href="${approveUrl}" target="_blank" style="display:inline-block;background-color:#006a4e;color:#ffffff;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:bold;font-size:15px;box-shadow:0 6px 20px rgba(0,106,78,0.5);">
+                    ✅ Payment Verified: Send PDF to Customer
+                  </a>
+                </div>
+
                 <div style="background:rgba(244,42,65,0.08);border:1px solid rgba(244,42,65,0.3);border-radius:12px;padding:20px;margin-bottom:20px;">
-                  <p style="color:#f42a41;font-weight:bold;font-size:13px;margin:0 0 14px 0;text-transform:uppercase;">Action Required: Verify & Send PDF</p>
+                  <p style="color:#f42a41;font-weight:bold;font-size:13px;margin:0 0 14px 0;text-transform:uppercase;">Order Summary</p>
                   <table style="width:100%;border-collapse:collapse;">
                     <tr style="border-bottom:1px solid rgba(255,255,255,0.08);">
                       <td style="color:#94A59B;font-size:13px;padding:8px 0;width:40%;vertical-align:top;">Book Title</td>
@@ -213,17 +226,6 @@ export async function POST(request: Request) {
                   </table>
                 </div>
                 
-                <!-- Admin Checklist -->
-                <div style="background:rgba(0,106,78,0.1);border:1px solid rgba(0,106,78,0.3);border-radius:12px;padding:18px;">
-                  <p style="color:#4CAF50;font-weight:bold;font-size:13px;margin:0 0 10px 0;">✅ Admin Checklist:</p>
-                  <ol style="color:#E0E8E3;font-size:13px;line-height:2;margin:0;padding-left:20px;">
-                    <li>Open your <strong>${methodLabel}</strong> app and verify TrxID: <strong>${paymentRef}</strong></li>
-                    <li>Check that ৳${amount} was received from phone: <strong>${phone}</strong></li>
-                    <li>If verified, reply to <strong>${email}</strong> with the PDF download link.</li>
-                    <li>Update the purchase status in Supabase dashboard to "approved".</li>
-                  </ol>
-                </div>
-
                 <p style="color:#4A5568;font-size:12px;margin:20px 0 0 0;text-align:center;">
                   Modern Police Memorial Museum Purchase System — ${new Date().getFullYear()}
                 </p>
@@ -243,20 +245,13 @@ export async function POST(request: Request) {
       console.log("✅ Purchase notification emails sent successfully to user and admin.");
     } else {
       console.warn("⚠️ EMAIL_USER / EMAIL_PASS or SMTP_USER / SMTP_PASS environment variables are missing!");
-      console.log("ℹ️ [MOCK EMAIL MODE ACTIVATED]:", {
-        userEmail: email,
-        adminEmail,
-        bookTitle,
-        amount,
-        paymentMethod,
-        paymentRef,
-        phone,
-      });
+      console.log("ℹ️ [MOCK EMAIL MODE ACTIVATED] Magic Approve URL:", approveUrl);
     }
 
     return NextResponse.json({
       success: true,
       message: "Purchase record processed and emails sent successfully.",
+      approveUrl,
     });
   } catch (error: any) {
     console.error("❌ CRITICAL SERVER ERROR in /api/send-purchase-record:", error);
