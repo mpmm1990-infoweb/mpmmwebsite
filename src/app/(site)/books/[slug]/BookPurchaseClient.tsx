@@ -1,41 +1,48 @@
 "use client";
 
 import { useState } from "react";
-import { Download, ShoppingCart } from "lucide-react";
+import { Mail, ShoppingCart } from "lucide-react";
 import PaymentModal from "@/components/PaymentModal";
 
 interface BookPurchaseClientProps {
   bookId: string;
   bookTitle: string;
+  bookTitleBn?: string;
   price: number;
   isFree: boolean;
-  freePdfUrl?: string;
+  // NOTE: freePdfUrl is intentionally NOT accepted as a prop.
+  // Free books are handled server-side via /api/download/[id] to keep PDF URLs off the client.
+  downloadId?: string; // Supabase-signed download ID for free books
 }
 
 export default function BookPurchaseClient({
   bookId,
   bookTitle,
+  bookTitleBn,
   price,
   isFree,
-  freePdfUrl,
+  downloadId,
 }: BookPurchaseClientProps) {
   const [showModal, setShowModal] = useState(false);
 
-  if (isFree && freePdfUrl) {
+  // ─── FREE BOOK: Secure server-side download link ───────────────────────────
+  if (isFree) {
+    const href = downloadId ? `/api/download/${downloadId}` : "#";
     return (
       <a
-        href={freePdfUrl}
+        href={href}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center justify-center gap-3 min-h-[48px] px-6 sm:px-8 py-3.5 sm:py-4 bg-[#006a4e] hover:bg-[#008764] text-white rounded-2xl font-bold font-heading hover:shadow-lg hover:scale-105 transition-all duration-300 border border-white/20 text-sm sm:text-base w-full sm:w-auto"
       >
-        <Download size={20} className="shrink-0" />
+        <Mail size={20} className="shrink-0" />
         <span className="lang-bn-only">ফ্রি পিডিএফ ডাউনলোড করুন</span>
         <span className="lang-en-only">Download Free PDF</span>
       </a>
     );
   }
 
+  // ─── PAID BOOK: Open payment modal ─────────────────────────────────────────
   return (
     <>
       <button
@@ -51,6 +58,7 @@ export default function BookPurchaseClient({
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         bookTitle={bookTitle}
+        bookTitleBn={bookTitleBn}
         bookId={bookId}
         price={price}
       />

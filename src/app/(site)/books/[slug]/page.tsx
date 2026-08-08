@@ -235,9 +235,9 @@ export default async function BookDetailPage({
                   <BookPurchaseClient
                     bookId={book._id}
                     bookTitle={book.title || ""}
+                    bookTitleBn={book.titleBn || book.title || ""}
                     price={book.price || 0}
                     isFree={book.isFree || false}
-                    freePdfUrl={book.pdfFile?.asset?.url}
                   />
                 </div>
 
