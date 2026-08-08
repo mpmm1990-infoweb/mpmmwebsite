@@ -58,7 +58,7 @@ export default function HeroSection({ data }: { data: HeroData | null }) {
   }, [rawBgImages.length]);
 
   return (
-    <section className="relative min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center">
+    <section className="relative min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center -mt-[calc(3px+4rem)] md:-mt-[calc(3px+5rem)]">
       {/* Background Image Cross-Fade Slideshow */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <AnimatePresence mode="wait">
@@ -99,7 +99,7 @@ export default function HeroSection({ data }: { data: HeroData | null }) {
       <div className="absolute inset-0 z-[1] heritage-pattern opacity-50 pointer-events-none" />
 
       {/* Content Box with Backdrop Blur and Dark Shielding for Crisp Readability */}
-      <div className="relative z-10 text-center px-4 sm:px-6 md:px-8 max-w-4xl mx-auto flex flex-col items-center justify-center pt-24 pb-16 w-full">
+      <div className="relative z-10 text-center px-4 sm:px-6 md:px-8 max-w-4xl mx-auto flex flex-col items-center justify-center pb-8 w-full">
         
         <div className="glass-panel p-6 sm:p-10 md:p-12 rounded-3xl border border-[#D4AF37]/30 shadow-2xl backdrop-blur-md bg-[#060E1F]/70 max-w-3xl w-full flex flex-col items-center">
           

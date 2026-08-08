@@ -30,7 +30,8 @@ export default function BookPurchaseClient({
         className="inline-flex items-center justify-center gap-3 min-h-[48px] px-6 sm:px-8 py-3.5 sm:py-4 bg-[#006a4e] hover:bg-[#008764] text-white rounded-2xl font-bold font-heading hover:shadow-lg hover:scale-105 transition-all duration-300 border border-white/20 text-sm sm:text-base w-full sm:w-auto"
       >
         <Download size={20} className="shrink-0" />
-        <span>ফ্রি পিডিএফ ডাউনলোড করুন</span>
+        <span className="lang-bn-only">ফ্রি পিডিএফ ডাউনলোড করুন</span>
+        <span className="lang-en-only">Download Free PDF</span>
       </a>
     );
   }
@@ -42,7 +43,8 @@ export default function BookPurchaseClient({
         className="inline-flex items-center justify-center gap-3 min-h-[48px] px-6 sm:px-8 py-3.5 sm:py-4 bg-[#f42a41] hover:bg-[#d81e34] text-white rounded-2xl font-bold font-heading hover:shadow-[0_8px_24px_rgba(244,42,65,0.35)] hover:scale-105 transition-all duration-300 border border-white/20 text-sm sm:text-base w-full sm:w-auto"
       >
         <ShoppingCart size={20} className="shrink-0" />
-        <span>৳{price} টাকায় ক্রয় করুন</span>
+        <span className="lang-bn-only">৳{price} টাকায় ক্রয় করুন</span>
+        <span className="lang-en-only">Buy for ৳{price}</span>
       </button>
 
       <PaymentModal

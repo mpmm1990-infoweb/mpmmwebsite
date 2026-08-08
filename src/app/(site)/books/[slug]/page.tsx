@@ -69,13 +69,9 @@ export default async function BookDetailPage({
         <div className="absolute inset-0 bg-gradient-to-br from-[#006a4e]/85 via-[#0B1B3D]/90 to-[#060E1F]/95" />
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
           <h1 className="font-heading text-2xl sm:text-3xl md:text-5xl font-bold text-white drop-shadow-md">
-            {book.titleBn || book.title}
+            <span className="lang-bn-only">{book.titleBn || book.title}</span>
+            <span className="lang-en-only">{book.title || book.titleBn}</span>
           </h1>
-          {book.titleBn && (
-            <p className="text-[#D4AF37] font-heading text-xs sm:text-base mt-3 uppercase tracking-widest font-bold">
-              {book.title}
-            </p>
-          )}
           <div className="w-20 sm:w-24 h-[3px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto mt-5 sm:mt-6 rounded-full shadow-[0_0_12px_rgba(212,175,55,0.6)]" />
         </div>
       </section>
@@ -100,7 +96,8 @@ export default async function BookDetailPage({
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-[#006a4e] to-[#0B1B3D] flex items-center justify-center p-6">
                         <span className="text-white font-heading text-xl sm:text-2xl font-bold text-center">
-                          {book.titleBn || book.title}
+                          <span className="lang-bn-only">{book.titleBn || book.title}</span>
+                          <span className="lang-en-only">{book.title || book.titleBn}</span>
                         </span>
                       </div>
                     )}
@@ -115,7 +112,10 @@ export default async function BookDetailPage({
                   <div className="flex flex-wrap gap-2.5 sm:gap-3 mb-6">
                     {book.author && (
                       <div className="bg-white/10 border border-[#D4AF37]/30 px-3.5 sm:px-4 py-2 rounded-2xl backdrop-blur-md">
-                        <p className="text-[11px] sm:text-xs text-[#C2CFC8] font-heading">লেখক / Author</p>
+                        <p className="text-[11px] sm:text-xs text-[#C2CFC8] font-heading">
+                          <span className="lang-bn-only">লেখক</span>
+                          <span className="lang-en-only">Author</span>
+                        </p>
                         <p className="text-xs sm:text-sm font-bold text-[#D4AF37] font-heading">
                           {book.author}
                         </p>
@@ -123,7 +123,10 @@ export default async function BookDetailPage({
                     )}
                     {book.publishYear && (
                       <div className="bg-white/10 border border-[#D4AF37]/30 px-3.5 sm:px-4 py-2 rounded-2xl backdrop-blur-md">
-                        <p className="text-[11px] sm:text-xs text-[#C2CFC8] font-heading">প্রকাশকাল / Year</p>
+                        <p className="text-[11px] sm:text-xs text-[#C2CFC8] font-heading">
+                          <span className="lang-bn-only">প্রকাশকাল</span>
+                          <span className="lang-en-only">Year</span>
+                        </p>
                         <p className="text-xs sm:text-sm font-bold text-[#D4AF37] font-heading">
                           {book.publishYear}
                         </p>
@@ -131,7 +134,10 @@ export default async function BookDetailPage({
                     )}
                     {book.pageCount && (
                       <div className="bg-white/10 border border-[#D4AF37]/30 px-3.5 sm:px-4 py-2 rounded-2xl backdrop-blur-md">
-                        <p className="text-[11px] sm:text-xs text-[#C2CFC8] font-heading">পৃষ্ঠা / Pages</p>
+                        <p className="text-[11px] sm:text-xs text-[#C2CFC8] font-heading">
+                          <span className="lang-bn-only">পৃষ্ঠা</span>
+                          <span className="lang-en-only">Pages</span>
+                        </p>
                         <p className="text-xs sm:text-sm font-bold text-[#D4AF37] font-heading">
                           {book.pageCount}
                         </p>
@@ -146,21 +152,32 @@ export default async function BookDetailPage({
                         book.isFree ? "text-[#006a4e]" : "text-[#D4AF37]"
                       }`}
                     >
-                      {book.isFree ? "ফ্রি / Free" : `৳${book.price}`}
+                      {book.isFree ? (
+                        <>
+                          <span className="lang-bn-only">ফ্রি</span>
+                          <span className="lang-en-only">Free</span>
+                        </>
+                      ) : (
+                        `৳${book.price}`
+                      )}
                     </span>
                   </div>
 
                   {/* Description */}
-                  {book.descriptionBn ? (
-                    <p className="text-white leading-relaxed mb-4 font-heading text-base sm:text-lg font-medium">
-                      {book.descriptionBn}
-                    </p>
-                  ) : null}
-                  {book.description && (
-                    <p className="text-white/80 leading-relaxed text-sm sm:text-base mb-8">
-                      {book.description}
-                    </p>
-                  )}
+                  <div className="lang-bn-only">
+                    {book.descriptionBn && (
+                      <p className="text-white leading-relaxed mb-4 font-heading text-base sm:text-lg font-medium">
+                        {book.descriptionBn}
+                      </p>
+                    )}
+                  </div>
+                  <div className="lang-en-only">
+                    {book.description && (
+                      <p className="text-white/80 leading-relaxed text-sm sm:text-base mb-8">
+                        {book.description}
+                      </p>
+                    )}
+                  </div>
 
                   {/* Purchase/Download */}
                   <BookPurchaseClient

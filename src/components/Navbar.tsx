@@ -26,7 +26,7 @@ interface NavbarProps {
 
 const defaultNavLinks: NavLink[] = [
   { label: "Home", labelBn: "হোম", href: "/" },
-  { label: "History", labelBn: "ইতিহাস", href: "/history" },
+  { label: "About Us", labelBn: "আমাদের সম্পর্কে", href: "/history" },
   { label: "Videos", labelBn: "ভিডিও", href: "/videos" },
   { label: "Library", labelBn: "লাইব্রেরি", href: "/books" },
   { label: "Gallery", labelBn: "গ্যালারি", href: "/gallery" },

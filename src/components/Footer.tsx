@@ -32,7 +32,7 @@ export default function Footer({
       {/* Dark Glass Footer Box */}
       <div className="glass-panel-dark bg-[#060E1F]/95 border-t border-[#D4AF37]/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 lg:gap-10">
             {/* About Column */}
             <div>
               <div className="flex items-center gap-2 mb-4">
@@ -55,7 +55,7 @@ export default function Footer({
               <ul className="space-y-3">
                 {[
                   { href: "/", labelBn: "হোম", labelEn: "Home" },
-                  { href: "/history", labelBn: "ইতিহাস", labelEn: "History" },
+                  { href: "/history", labelBn: "আমাদের সম্পর্কে", labelEn: "About Us" },
                   { href: "/videos", labelBn: "ভিডিও আর্কাইভ", labelEn: "Video Archive" },
                   { href: "/books", labelBn: "ডিজিটাল লাইব্রেরি", labelEn: "Digital Library" },
                   { href: "/gallery", labelBn: "ঐতিহাসিক গ্যালারি", labelEn: "Historical Gallery" },
@@ -144,26 +144,38 @@ export default function Footer({
                 </div>
               )}
             </div>
+
+            {/* Developer Column */}
+            <div>
+              <h4 className="font-heading text-lg text-[#D4AF37] font-bold mb-4">
+                <span className="lang-bn-only">ডেভেলপার</span>
+                <span className="lang-en-only">Developer</span>
+              </h4>
+              <ul className="space-y-3">
+                <li>
+                  <a
+                    href="YOUR_PORTFOLIO_LINK_HERE"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-2 text-white/80 hover:text-[#D4AF37] transition-all duration-300 min-h-[36px]"
+                  >
+                    <span className="text-[15px] font-heading group-hover:translate-x-1 transition-transform lang-bn-only">
+                      ওয়েবসাইট ভিজিট করুন
+                    </span>
+                    <span className="text-[15px] font-heading group-hover:translate-x-1 transition-transform lang-en-only">
+                      Visit Website
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          {/* Copyright & Developer */}
-          <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+          {/* Copyright */}
+          <div className="mt-12 pt-8 border-t border-white/10 text-center">
             <div className="text-xs text-white/70">
               <p className="font-heading text-sm lang-bn-only">© {currentYear} আধুনিক পুলিশ প্রথম ব্যাচ ১৯৯০। সর্বস্বত্ব সংরক্ষিত।</p>
               <p className="font-heading text-sm lang-en-only">© {currentYear} Modern Police Memorial Museum — First Batch 1990. All rights reserved.</p>
-            </div>
-            
-            <div className="text-xs text-white/50 hover:text-white transition-opacity flex items-center gap-1">
-              <span className="lang-bn-only font-heading">কারিগরি সহযোগিতায়:</span>
-              <span className="lang-en-only">Developed by:</span>
-              <a 
-                href="#" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-[#D4AF37] font-medium hover:underline"
-              >
-                Tanvir Kabir
-              </a>
             </div>
           </div>
         </div>

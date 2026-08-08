@@ -26,8 +26,8 @@ export async function POST(request: Request) {
     const host = process.env.SMTP_HOST || "smtp.gmail.com";
     const port = Number(process.env.SMTP_PORT) || 587;
     const user = process.env.SMTP_USER || "";
-    const pass = process.env.SMTP_PASS || "";
-    const adminEmail = process.env.ADMIN_EMAIL || "info@modernpolicemuseum.org";
+    const pass = (process.env.SMTP_PASS || "").replace(/\s+/g, "");
+    const adminEmail = process.env.ADMIN_EMAIL || user || "info.mpmm1990@gmail.com";
 
     if (user && pass) {
       const transporter = nodemailer.createTransport({
