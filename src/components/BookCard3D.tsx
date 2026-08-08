@@ -28,9 +28,9 @@ export default function BookCard3D({
   author,
 }: BookCard3DProps) {
   return (
-    <Link href={`/books/${slug}`} className="block perspective-container group">
+    <Link href={`/books/${slug}`} className="block perspective-container group h-full">
       <motion.div
-        className="relative glass-panel rounded-2xl overflow-hidden shadow-heritage border border-[#D4AF37]/25"
+        className="relative glass-panel rounded-2xl overflow-hidden shadow-heritage border border-[#D4AF37]/25 flex flex-col h-full"
         whileHover={{
           rotateY: -6,
           rotateX: 4,
@@ -40,8 +40,8 @@ export default function BookCard3D({
         transition={{ type: "spring", stiffness: 220, damping: 20 }}
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Cover Image */}
-        <div className="relative aspect-[3/4] bg-[#060E1F]/60 overflow-hidden">
+        {/* Cover Image (No floating badge) */}
+        <div className="relative aspect-[3/4] bg-[#060E1F]/60 overflow-hidden shrink-0">
           {coverImage?.asset ? (
             <Image
               src={urlFor(coverImage).width(400).height(533).url()}
@@ -59,48 +59,45 @@ export default function BookCard3D({
             </div>
           )}
 
-          {/* Price Badge */}
-          <div className="absolute top-3 right-3 z-10">
-            <span
-              className={`px-3 py-1.5 rounded-full text-xs font-bold font-heading shadow-md ${
-                isFree
-                  ? "bg-[#006a4e] text-white border border-white/30"
-                  : "bg-[#f42a41] text-white border border-white/30 shadow-[0_4px_12px_rgba(244,42,65,0.4)]"
-              }`}
-            >
-              {isFree ? (
-                <>
-                  <span className="lang-bn-only">ফ্রি</span>
-                  <span className="lang-en-only">Free</span>
-                </>
-              ) : (
-                `৳${price}`
-              )}
-            </span>
-          </div>
-
           {/* Glass Hover overlay */}
           <div className="absolute inset-0 bg-[#060E1F]/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-            <div className="flex items-center gap-2 text-white font-bold bg-[#f42a41] hover:bg-[#d81e34] px-5 py-2.5 rounded-full shadow-lg border border-white/30 transform group-hover:scale-105 transition-transform font-heading">
-              <ShoppingCart size={18} />
+            <div className="flex items-center gap-2 text-white font-bold bg-[#f42a41] hover:bg-[#d81e34] px-5 py-2.5 rounded-full shadow-lg border border-white/30 transform group-hover:scale-105 transition-transform font-heading text-xs sm:text-sm">
+              <ShoppingCart size={16} />
               <span className="lang-bn-only">বিবরণ দেখুন</span>
               <span className="lang-en-only">View Details</span>
             </div>
           </div>
         </div>
 
-        {/* Info */}
-        <div className="p-4 bg-[#060E1F]/90 backdrop-blur-md">
-          <h3 className="font-heading font-bold text-white text-base line-clamp-2 leading-snug">
-            <span className="lang-bn-only">{titleBn || title}</span>
-            <span className="lang-en-only">{title || titleBn}</span>
-          </h3>
-          {author && (
-            <p className="text-[#D4AF37] text-xs mt-2 font-medium">
-              <span className="lang-bn-only">লেখক: {author}</span>
-              <span className="lang-en-only">Author: {author}</span>
-            </p>
-          )}
+        {/* Text Info & Rokomari-Style Bottom Price */}
+        <div className="p-4 bg-[#060E1F]/90 backdrop-blur-md flex flex-col justify-between flex-1">
+          <div>
+            <h3 className="font-heading font-bold text-white text-sm sm:text-base line-clamp-2 leading-snug">
+              <span className="lang-bn-only">{titleBn || title}</span>
+              <span className="lang-en-only">{title || titleBn}</span>
+            </h3>
+            {author && (
+              <p className="text-[#C2CFC8] text-xs mt-1.5 font-heading truncate">
+                <span className="lang-bn-only">{author}</span>
+                <span className="lang-en-only">{author}</span>
+              </p>
+            )}
+          </div>
+
+          {/* Rokomari Style Price Display at Bottom */}
+          <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between">
+            {isFree || price === 0 ? (
+              <span className="font-heading font-bold text-xs sm:text-sm text-[#006a4e]">
+                <span className="lang-bn-only">ফ্রি</span>
+                <span className="lang-en-only">Free</span>
+              </span>
+            ) : (
+              <span className="font-heading font-bold text-xs sm:text-sm text-[#D4AF37]">
+                <span className="lang-bn-only">৳{price}</span>
+                <span className="lang-en-only">TK. {price}</span>
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Metallic Gold bottom accent */}
