@@ -167,28 +167,3 @@ export const KOTHA_O_GATHA_PREVIEW_QUERY = `*[_type == "kothaOGatha" && isApprov
   contentBn,
   photo
 }`;
-
-// Legacy Queries kept for backward compatibility if needed
-export const MEMBERS_QUERY = `*[_type == "member"] | order(order asc){
-  _id,
-  name,
-  nameBn,
-  photo,
-  rank,
-  rankBn,
-  batchYear,
-  bio,
-  bioBn,
-  isDeceased,
-  order
-}`;
-
-export const MEMBERS_PREVIEW_QUERY = `*[_type == "member"] | order(order asc)[0...10]{
-  _id,
-  name,
-  nameBn,
-  photo,
-  rank,
-  rankBn,
-  isDeceased
-}`;
