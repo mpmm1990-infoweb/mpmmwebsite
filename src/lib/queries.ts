@@ -5,6 +5,7 @@ export const GLOBAL_SETTINGS_QUERY = `*[_type == "globalSettings"][0]{
   siteTitleBn,
   siteDescription,
   logo,
+  favicon,
   ogImage,
   navLinks[]{
     label,
@@ -113,7 +114,7 @@ export const BOOK_BY_SLUG_QUERY = `*[_type == "book" && slug.current == $slug][0
   pdfFile{
     asset->{url}
   },
-  supabasePdfPath,
+  externalLink,
   author,
   publishYear,
   pageCount

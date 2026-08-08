@@ -4,7 +4,7 @@ export const globalSettings = defineType({
   name: "globalSettings",
   title: "সাইট সেটিংস (সম্পূর্ণ ওয়েবসাইটের সেটিংস)",
   type: "document",
-  description: "এখান থেকে সম্পূর্ণ ওয়েবসাইটের মূল সেটিংস পরিবর্তন করতে পারবেন — সাইটের নাম, লোগো, নেভিগেশন মেনু, ফুটার টেক্সট, যোগাযোগ তথ্য এবং সোশ্যাল মিডিয়া লিংক।",
+  description: "এখান থেকে সম্পূর্ণ ওয়েবসাইটের মূল সেটিংস পরিবর্তন করতে পারবেন — সাইটের নাম, লোগো, ফেভিকন (ব্রাউজার আইকন), নেভিগেশন মেনু, ফুটার টেক্সট, যোগাযোগ তথ্য এবং সোশ্যাল মিডিয়া লিংক।",
   fields: [
     defineField({
       name: "siteTitle",
@@ -32,6 +32,13 @@ export const globalSettings = defineType({
       type: "image",
       options: { hotspot: true },
       description: "এই লোগোটি ওয়েবসাইটের উপরের নেভিগেশন বারে বাম দিকে গোলাকার আকারে দেখাবে।",
+    }),
+    defineField({
+      name: "favicon",
+      title: "ফেভিকন / সাইট আইকন (Favicon - ব্রাউজার ট্যাবের ছোট আইকন)",
+      type: "image",
+      options: { hotspot: true },
+      description: "ব্রাউজার ট্যাবে এবং বুকমার্কে আপনার ওয়েবসাইটের নামের পাশে যে ছোট আইকনটি দেখায় তা এখানে আপলোড করুন (Square / বর্গাকার PNG বা ICO ইমেজ আপলোড করা ভালো)।",
     }),
     defineField({
       name: "ogImage",

@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter, Noto_Serif_Bengali } from "next/font/google";
+import { sanityFetch } from "@/sanity/client";
+import { urlFor } from "@/sanity/image";
+import { GLOBAL_SETTINGS_QUERY } from "@/lib/queries";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -21,18 +24,41 @@ const notoSerifBengali = Noto_Serif_Bengali({
   weight: ["400", "700"],
 });
 
-export const metadata: Metadata = {
-  title: "Modern Police Memorial Museum — আধুনিক পুলিশ প্রথম ব্যাচ ১৯৯০",
-  description:
-    "A heritage memorial website honoring the Modern Police First Batch of 1990. Explore history, videos, gallery, digital library, and prominent members.",
-  keywords: [
-    "Modern Police Memorial Museum",
-    "আধুনিক পুলিশ প্রথম ব্যাচ",
-    "1990",
-    "Bangladesh Police",
-    "Memorial",
-  ],
-};
+export async function generateMetadata(): Promise<Metadata> {
+  let settings: any = null;
+  try {
+    settings = await sanityFetch(GLOBAL_SETTINGS_QUERY, {}, ["globalSettings"]);
+  } catch {
+    // fallback
+  }
+
+  const faviconUrl = settings?.favicon?.asset
+    ? urlFor(settings.favicon).width(64).height(64).url()
+    : undefined;
+
+  return {
+    title: settings?.siteTitle
+      ? `${settings.siteTitleBn || settings.siteTitle} — Modern Police Memorial Museum`
+      : "Modern Police Memorial Museum — আধুনিক পুলিশ প্রথম ব্যাচ ১৯৯০",
+    description:
+      settings?.siteDescription ||
+      "A heritage memorial website honoring the Modern Police First Batch of 1990. Explore history, videos, gallery, digital library, and prominent members.",
+    keywords: [
+      "Modern Police Memorial Museum",
+      "আধুনিক পুলিশ প্রথম ব্যাচ",
+      "1990",
+      "Bangladesh Police",
+      "Memorial",
+    ],
+    icons: faviconUrl
+      ? {
+          icon: faviconUrl,
+          shortcut: faviconUrl,
+          apple: faviconUrl,
+        }
+      : undefined,
+  };
+}
 
 export default function RootLayout({
   children,
