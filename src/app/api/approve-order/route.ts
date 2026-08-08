@@ -12,6 +12,7 @@ interface BookQueryResponse {
       url?: string;
     };
   };
+  externalLink?: string;
 }
 
 export async function GET(request: Request) {
@@ -69,7 +70,7 @@ export async function GET(request: Request) {
       );
     }
 
-    // ── 2. Fetch Book & PDF Asset URL from Sanity CMS ───────────────────────
+    // ── 2. Fetch Book, PDF Asset URL & External Link from Sanity CMS ─────────
     const query = `*[_type == "book" && (slug.current == $slug || _id == $slug)][0]{
       _id,
       title,
@@ -77,29 +78,39 @@ export async function GET(request: Request) {
       slug,
       pdfFile{
         asset->{url}
-      }
+      },
+      externalLink
     }`;
 
     const book = await sanityFetch<BookQueryResponse>(query, { slug: bookSlug }, ["book"]);
-    const pdfUrl = book?.pdfFile?.asset?.url;
+    const pdfAssetUrl = book?.pdfFile?.asset?.url;
 
-    if (!book || !pdfUrl) {
-      console.warn("⚠️ Book or PDF file asset missing in Sanity:", { bookSlug, foundBook: !!book, pdfUrl });
+    // Flexible Delivery Link (External Drive Link takes priority if set, otherwise uploaded PDF file)
+    const finalDownloadLink = book?.externalLink || pdfAssetUrl;
+
+    if (!book || !finalDownloadLink) {
+      console.warn("⚠️ Neither PDF file nor external link found for book in Sanity:", { bookSlug, foundBook: !!book });
       return new NextResponse(
         `<!DOCTYPE html>
         <html lang="bn">
-        <head><title>PDF Not Found — PPMP Admin</title></head>
+        <head><title>Download Link Missing — PPMP Admin</title></head>
         <body style="background-color:#060E1F;color:#ffffff;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;">
-          <div style="background:#0B1B3D;padding:36px;border-radius:20px;border:1px solid #f42a41;text-align:center;max-width:480px;">
-            <h2 style="color:#f42a41;margin-top:0;">⚠️ পিডিএফ ফাইলটি পাওয়া যায়নি</h2>
-            <p style="color:#C2CFC8;font-size:14px;line-height:1.6;">
-              Sanity CMS-এ "<strong>${bookSlug}</strong>" বইটির পিডিএফ ফাইল আপলোড করা নেই। অনুগ্রহ করে Sanity স্টুডিওতে পিডিএফ ফাইল আপলোড করুন।
+          <div style="background:#0B1B3D;padding:36px;border-radius:20px;border:1px solid #f42a41;text-align:center;max-width:520px;box-shadow:0 25px 50px rgba(0,0,0,0.8);">
+            <div style="font-size:44px;margin-bottom:12px;">⚠️</div>
+            <h2 style="color:#f42a41;margin:0 0 12px 0;font-size:20px;">Error: Download Link Missing</h2>
+            <p style="color:#E0E8E3;font-size:14px;line-height:1.6;margin:0 0 16px 0;">
+              No PDF file or external link was found for this book in the Sanity database. Please update the book in Sanity first.
             </p>
+            <div style="background:rgba(244,42,65,0.1);border:1px solid rgba(244,42,65,0.3);border-radius:12px;padding:14px;">
+              <p style="color:#C2CFC8;font-size:12px;margin:0;">
+                Sanity Studio-তে "<strong>${bookSlug}</strong>" বইটির 'পিডিএফ ফাইল আপলোড' অথবা 'বইয়ের ড্রাইভ/ডাউনলোড লিংক' ফিল্ডটি পূরণ করুন।
+              </p>
+            </div>
           </div>
         </body>
         </html>`,
         {
-          status: 444,
+          status: 404,
           headers: { "Content-Type": "text/html; charset=utf-8" },
         }
       );
@@ -158,9 +169,9 @@ export async function GET(request: Request) {
                   আপনার পেমেন্ট যাচাই সম্পন্ন হয়েছে। আপনি এখন <strong>"${bookTitleBn}"</strong> বইটির সম্পূর্ণ ডিজিটাল সংস্করণ (PDF) ডাউনলোড করে পড়তে পারবেন।
                 </p>
 
-                <!-- PDF Download CTA Button -->
+                <!-- Dynamic PDF / Drive Download CTA Button -->
                 <div style="margin:32px 0;">
-                  <a href="${pdfUrl}" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#f42a41,#d81e34);color:#ffffff;padding:16px 36px;border-radius:14px;text-decoration:none;font-weight:bold;font-size:16px;box-shadow:0 8px 24px rgba(244,42,65,0.4);">
+                  <a href="${finalDownloadLink}" target="_blank" rel="noopener noreferrer" style="display:inline-block;background:linear-gradient(135deg,#f42a41,#d81e34);color:#ffffff;padding:16px 36px;border-radius:14px;text-decoration:none;font-weight:bold;font-size:16px;box-shadow:0 8px 24px rgba(244,42,65,0.4);">
                     বইটি ডাউনলোড করুন 📥
                   </a>
                 </div>
@@ -183,9 +194,9 @@ export async function GET(request: Request) {
       };
 
       await transporter.sendMail(customerMailOptions);
-      console.log(`✅ Magic Link PDF Delivery successful to ${email} for book "${bookTitle}"`);
+      console.log(`✅ Magic Link PDF Delivery successful to ${email} for book "${bookTitle}" using link: ${finalDownloadLink}`);
     } else {
-      console.warn("⚠️ SMTP credentials not found. PDF delivery mock log:", { email, pdfUrl });
+      console.warn("⚠️ SMTP credentials not found. PDF delivery mock log:", { email, finalDownloadLink });
     }
 
     // ── 4. Admin Confirmation Browser Response HTML ──────────────────────────

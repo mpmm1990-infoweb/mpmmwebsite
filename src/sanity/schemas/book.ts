@@ -4,7 +4,7 @@ export const book = defineType({
   name: "book",
   title: "ডিজিটাল লাইব্রেরি — বই/পিডিএফ (লাইব্রেরি পেজ)",
   type: "document",
-  description: "এখানে বই বা পিডিএফ যোগ করুন। এগুলো ওয়েবসাইটের 'লাইব্রেরি' পেজে কার্ড আকারে দেখাবে এবং ক্লিক করলে বিস্তারিত পেজ খুলবে। ফ্রি বই সরাসরি ডাউনলোড করা যাবে, আর পেইড বই কিনতে হবে।",
+  description: "এখানে বই বা পিডিএফ যোগ করুন। এগুলো ওয়েবসাইটের 'লাইব্রেরি' পেজে কার্ড আকারে দেখাবে এবং ক্লিক করলে বিস্তারিত পেজ খুলবে।",
   fields: [
     defineField({
       name: "title",
@@ -65,24 +65,24 @@ export const book = defineType({
     }),
     defineField({
       name: "pdfFile",
-      title: "পিডিএফ ফাইল (ফ্রি বইয়ের জন্য — সরাসরি ডাউনলোড)",
+      title: "পিডিএফ ফাইল আপলোড (PDF Upload)",
       type: "file",
       options: {
         accept: ".pdf",
       },
-      description: "শুধুমাত্র ফ্রি বইয়ের জন্য এখানে পিডিএফ আপলোড করুন। পেইড বইয়ের জন্য Supabase Storage ব্যবহার করুন।",
+      description: "সরাসরি পিডিএফ ফাইল আপলোড করতে চাইলে এখানে দিন।",
     }),
     defineField({
-      name: "supabasePdfPath",
-      title: "Supabase পিডিএফ পাথ (পেইড বইয়ের জন্য)",
-      type: "string",
-      description: "পেইড বইয়ের জন্য Supabase Storage-এ পিডিএফ ফাইলের পাথ লিখুন। উদাহরণ: books/my-book.pdf",
+      name: "externalLink",
+      title: "বইয়ের ড্রাইভ/ডাউনলোড লিংক (Drive/External Link)",
+      type: "url",
+      description: "যদি পিডিএফ ফাইল বড় হয় এবং আপনি গুগল ড্রাইভ বা অন্য কোনো লিংক দিতে চান, তবে এখানে পেস্ট করুন। (নোট: ফাইল আপলোড না করে শুধু লিংক দিলেও অটোমেটিক কাস্টমারের কাছে এই লিংক চলে যাবে)।",
     }),
     defineField({
       name: "author",
       title: "লেখকের নাম (বই কার্ড ও বিস্তারিত পেজে দেখাবে)",
       type: "string",
-      description: "বইয়ের লেখকের নাম। এটি বই কার্ডে সোনালী রঙে এবং বিস্তারিত পেজে 'লেখক' ব্যাজে দেখাবে।",
+      description: "বইয়ের লেখকের নাম। এটি বই কার্ডে সোনালী রঙে এবং বিস্তারিত পেজে দেখাবে।",
     }),
     defineField({
       name: "publishYear",
