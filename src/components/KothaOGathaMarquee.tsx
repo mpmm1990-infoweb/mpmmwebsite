@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { motion, useMotionValue, useAnimationFrame } from "framer-motion";
 import { PenTool, PlusCircle, ArrowUpRight } from "lucide-react";
 import { urlFor } from "@/sanity/image";
 import SubmitWordsModal from "./SubmitWordsModal";
@@ -87,31 +88,114 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
 
   const rawList = items && items.length > 0 ? items : fallbackItems;
 
-  // Ensure base list has at least 6 items so it easily fills wide screens
+  // Ensure base list has at least 6 items so it comfortably fills wide screens
   let baseList = [...rawList];
   while (baseList.length < 6) {
     baseList = [...baseList, ...rawList];
   }
 
-  // Exactly 2 equal halves: translateX(-50%) shifts 1st half out and 2nd half into 0 position for a 100% seamless, gapless loop
+  // Exactly 2 equal halves: translating -50% shifts 1st half into 2nd half seamlessly
   const marqueeList = [...baseList, ...baseList];
+
+  // ── Framer Motion Interactive Marquee State ──
+  const x = useMotionValue(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [halfWidth, setHalfWidth] = useState(0);
+
+  const isPaused = useRef(false);
+  const isDragging = useRef(false);
+  const dragDistance = useRef(0);
+
+  // Measure half of the marquee width dynamically
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setHalfWidth(containerRef.current.scrollWidth / 2);
+      }
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, [marqueeList.length]);
+
+  // Buttery-smooth continuous animation loop
+  useAnimationFrame((_, delta) => {
+    if (isPaused.current || isDragging.current || halfWidth === 0) return;
+
+    // 45px / sec continuous scroll speed
+    let nextX = x.get() - (45 * delta) / 1000;
+
+    // Wrap around seamlessly when completing one full loop
+    if (nextX <= -halfWidth) {
+      nextX += halfWidth;
+    }
+    x.set(nextX);
+  });
+
+  // Handle continuous loop bounds while dragging
+  const handleDrag = () => {
+    if (halfWidth === 0) return;
+    let currentX = x.get();
+
+    if (currentX <= -halfWidth) {
+      x.set(currentX + halfWidth);
+    } else if (currentX > 0) {
+      x.set(currentX - halfWidth);
+    }
+  };
 
   return (
     <div className="w-full relative overflow-hidden py-4">
-      {/* Infinite Horizontal Marquee Slider */}
+      {/* Infinite Horizontal Marquee Slider Container */}
       <div className="relative w-full overflow-hidden group">
-        {/* Fading side edges */}
+        {/* Fading side gradient edges */}
         <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-[#060E1F] to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-[#060E1F] to-transparent z-10 pointer-events-none" />
 
-        <div className="flex gap-6 w-max animate-marquee group-hover:[animation-play-state:paused] pointer-events-auto">
+        {/* Interactive Draggable Track with Pause on Hover */}
+        <motion.div
+          ref={containerRef}
+          drag="x"
+          dragConstraints={{ left: -100000, right: 100000 }}
+          onDragStart={() => {
+            isDragging.current = true;
+            dragDistance.current = 0;
+          }}
+          onDrag={(_, info) => {
+            dragDistance.current += Math.abs(info.delta.x);
+            handleDrag();
+          }}
+          onDragEnd={() => {
+            setTimeout(() => {
+              isDragging.current = false;
+            }, 80);
+          }}
+          onMouseEnter={() => {
+            isPaused.current = true;
+          }}
+          onMouseLeave={() => {
+            isPaused.current = false;
+          }}
+          onTouchStart={() => {
+            isPaused.current = true;
+          }}
+          onTouchEnd={() => {
+            isPaused.current = false;
+          }}
+          style={{ x }}
+          className="flex gap-6 w-max cursor-grab active:cursor-grabbing select-none py-2"
+        >
           {marqueeList.map((item, idx) => {
             const badge = categoryBadgeStyles[item.category || "story"] || categoryBadgeStyles.story;
 
             return (
               <div
                 key={`${item._id}-${idx}`}
-                onClick={() => setSelectedItem(item)}
+                onClick={() => {
+                  if (dragDistance.current < 8) {
+                    setSelectedItem(item);
+                  }
+                }}
                 className="w-72 sm:w-80 shrink-0 flex-shrink-0 glass-panel glass-panel-hover p-6 rounded-3xl border border-[#D4AF37]/25 shadow-heritage cursor-pointer transition-all duration-300 flex flex-col justify-between group/card hover:border-[#D4AF37]/60"
               >
                 <div>
@@ -143,6 +227,7 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
                         alt={item.name || ""}
                         fill
                         className="object-cover"
+                        draggable={false}
                       />
                     </div>
                   ) : (
@@ -165,7 +250,7 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
               </div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
 
       {/* Share Your Words Submission CTA */}
