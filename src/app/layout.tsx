@@ -58,6 +58,9 @@ export async function generateMetadata(): Promise<Metadata> {
       "Bangladesh Police",
       "Memorial",
     ],
+    verification: {
+      google: "iYRn2EL7DM1rLsqwBiKOiTEi7Pnup_3tVPK75x9SJ2k",
+    },
     icons: faviconUrl
       ? {
           icon: [{ url: faviconUrl }],
