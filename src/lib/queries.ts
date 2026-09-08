@@ -145,7 +145,7 @@ export const GALLERY_QUERY = `*[_type == "galleryImage"] | order(order asc){
   order
 }`;
 
-export const GALLERY_PREVIEW_QUERY = `*[_type == "galleryImage"] | order(order asc)[0...8]{
+export const GALLERY_PREVIEW_QUERY = `*[_type == "galleryImage"] | order(order asc){
   _id,
   image,
   caption,

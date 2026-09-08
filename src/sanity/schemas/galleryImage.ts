@@ -4,7 +4,7 @@ export const galleryImage = defineType({
   name: "galleryImage",
   title: "গ্যালারি ছবি (গ্যালারি পেজ)",
   type: "document",
-  description: "এখানে গ্যালারির ছবি যোগ করুন। এই ছবিগুলো ওয়েবসাইটের 'গ্যালারি' পেজে সুন্দরভাবে গ্রিড আকারে সাজানো থাকবে এবং ক্লিক করলে বড় আকারে দেখা যাবে।",
+  description: "এখানে গ্যালারির ছবি যোগ করুন। এই ছবিগুলো ওয়েবসাইটের 'গ্যালারি' পেজে এবং হোমপেজে সুন্দরভাবে সাজানো থাকবে।",
   fields: [
     defineField({
       name: "image",
@@ -12,6 +12,21 @@ export const galleryImage = defineType({
       type: "image",
       options: { hotspot: true },
       description: "গ্যালারি পেজে এই ছবিটি একটি কার্ডের মধ্যে দেখাবে। ভালো মানের ছবি আপলোড করুন।",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "category",
+      title: "গ্যালারি বিভাগ / Gallery Category",
+      type: "string",
+      options: {
+        list: [
+          { title: "৯০-এর অ্যালবাম (90s Vintage Album)", value: "90s" },
+          { title: "ঐতিহাসিক গ্যালারি (Historic Gallery)", value: "historic" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "90s",
+      description: "ছবিটির ক্যাটাগরি নির্বাচন করুন: '৯০-এর অ্যালবাম' নাকি 'ঐতিহাসিক গ্যালারি'।",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -31,22 +46,6 @@ export const galleryImage = defineType({
       title: "সাল (ছবিটি কোন সালের)",
       type: "string",
       description: "ছবিটি কোন সালে তোলা হয়েছে তা লিখুন। গ্যালারি সাজানোর জন্য ব্যবহৃত হয়।",
-    }),
-    defineField({
-      name: "category",
-      title: "ক্যাটাগরি (ছবির ধরন — ফিল্টার করার জন্য)",
-      type: "string",
-      options: {
-        list: [
-          { title: "অনুষ্ঠান (Events)", value: "events" },
-          { title: "প্রশিক্ষণ (Training)", value: "training" },
-          { title: "পুনর্মিলনী (Reunions)", value: "reunions" },
-          { title: "আনুষ্ঠানিক অনুষ্ঠান (Ceremonies)", value: "ceremonies" },
-          { title: "ঐতিহাসিক (Historical)", value: "historical" },
-          { title: "অন্যান্য (Other)", value: "other" },
-        ],
-      },
-      description: "ছবিটি কোন ধরনের তা বেছে নিন। এটি গ্যালারি পেজে ফিল্টার করতে সাহায্য করে।",
     }),
     defineField({
       name: "order",
@@ -74,9 +73,16 @@ export const galleryImage = defineType({
       media: "image",
     },
     prepare({ title, subtitle, media }) {
+      const categoryTitle =
+        subtitle === "historic"
+          ? "ঐতিহাসিক গ্যালারি"
+          : subtitle === "90s"
+          ? "৯০-এর অ্যালবাম"
+          : subtitle || "";
+
       return {
         title: title || "শিরোনামবিহীন ছবি",
-        subtitle: subtitle || "",
+        subtitle: categoryTitle,
         media,
       };
     },

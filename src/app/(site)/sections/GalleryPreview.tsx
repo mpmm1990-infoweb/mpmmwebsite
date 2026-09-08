@@ -1,54 +1,177 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, ImageIcon } from "lucide-react";
+import { motion } from "framer-motion";
+import { urlFor } from "@/sanity/image";
 import SectionHeading from "@/components/SectionHeading";
 import ScrollReveal from "@/components/ScrollReveal";
-import GalleryGrid from "@/components/GalleryGrid";
+import GalleryLightbox, {
+  GalleryLightboxItem,
+} from "@/components/GalleryLightbox";
 
-export default function GalleryPreview({ data }: { data: unknown[] }) {
-  const images = (data || []) as Array<{
-    _id: string;
-    image: { asset: { _ref: string } };
-    caption?: string;
-    captionBn?: string;
-    year?: string;
-    category?: string;
-  }>;
+interface GalleryPreviewProps {
+  data: unknown[];
+}
+
+export default function GalleryPreview({ data }: GalleryPreviewProps) {
+  const images = (data || []) as GalleryLightboxItem[];
+  const [activeTab, setActiveTab] = useState<"90s" | "historic">("90s");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  // Filter based on selected category tab
+  const filteredImages = images.filter((img) => {
+    if (activeTab === "historic") {
+      return img.category === "historic" || img.category === "historical";
+    }
+    // Default '90s': Include explicit '90s', or items without category, or other vintage items
+    return (
+      img.category === "90s" ||
+      !img.category ||
+      (img.category !== "historic" && img.category !== "historical")
+    );
+  });
+
+  // Strict 6 Items Limit
+  const displayImages = filteredImages.slice(0, 6);
 
   return (
     <section className="py-16 sm:py-20 md:py-28 heritage-pattern w-full max-w-full overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          title="Historical Gallery"
-          titleBn="ঐতিহাসিক গ্যালারি"
+          title="Photo Archives"
+          titleBn="ছবি ও স্মৃতির অ্যালবাম"
         />
 
-        {images.length > 0 ? (
-          <div className="mt-8">
-            <GalleryGrid images={images} />
+        {/* Tab Switcher: Pill Toggle */}
+        <div className="flex justify-center mb-8 sm:mb-10">
+          <div className="inline-flex p-1.5 rounded-full bg-[#060E1F]/90 border border-[#D4AF37]/30 backdrop-blur-xl shadow-xl">
+            {/* Tab 1: 90s Vintage Album (Default Selected) */}
+            <button
+              onClick={() => {
+                setActiveTab("90s");
+                setLightboxIndex(null);
+              }}
+              className={`px-4 sm:px-7 py-2.5 rounded-full text-xs sm:text-sm md:text-base font-bold transition-all duration-300 font-heading ${
+                activeTab === "90s"
+                  ? "bg-gradient-to-r from-[#006a4e] to-[#008764] text-white shadow-[0_0_15px_rgba(0,106,78,0.6)] border border-[#D4AF37]/60"
+                  : "text-[#C2CFC8] hover:text-white hover:bg-white/5"
+              }`}
+            >
+              <span className="lang-bn-only">৯০-এর স্মৃতি অ্যালবাম</span>
+              <span className="lang-en-only">90s Vintage Album</span>
+            </button>
+
+            {/* Tab 2: Historic Gallery */}
+            <button
+              onClick={() => {
+                setActiveTab("historic");
+                setLightboxIndex(null);
+              }}
+              className={`px-4 sm:px-7 py-2.5 rounded-full text-xs sm:text-sm md:text-base font-bold transition-all duration-300 font-heading ${
+                activeTab === "historic"
+                  ? "bg-gradient-to-r from-[#006a4e] to-[#008764] text-white shadow-[0_0_15px_rgba(0,106,78,0.6)] border border-[#D4AF37]/60"
+                  : "text-[#C2CFC8] hover:text-white hover:bg-white/5"
+              }`}
+            >
+              <span className="lang-bn-only">ঐতিহাসিক গ্যালারি</span>
+              <span className="lang-en-only">Historic Gallery</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Strict 6 Items Grid (3 Columns on Desktop & Mobile) */}
+        {displayImages.length > 0 ? (
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-5 mt-6">
+            {displayImages.map((item, index) => (
+              <ScrollReveal
+                key={item._id}
+                delay={index * 0.05}
+                duration={0.4}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
+                  className="relative aspect-square w-full rounded-md sm:rounded-xl overflow-hidden cursor-pointer group glass-panel border border-[#D4AF37]/30 shadow-md"
+                  onClick={() => setLightboxIndex(index)}
+                >
+                  {item.image?.asset && (
+                    <Image
+                      src={urlFor(item.image)
+                        .width(600)
+                        .height(600)
+                        .quality(85)
+                        .url()}
+                      alt={item.captionBn || item.caption || "Gallery image"}
+                      fill
+                      className="aspect-square object-cover rounded-md sm:rounded-xl group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 768px) 33vw, 30vw"
+                    />
+                  )}
+
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-[#060E1F]/75 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2 sm:p-3 md:p-4">
+                    <div className="w-full">
+                      {(item.caption || item.captionBn) && (
+                        <p className="text-white text-[11px] sm:text-xs md:text-sm font-bold font-heading line-clamp-2 leading-snug">
+                          <span className="lang-bn-only">
+                            {item.captionBn || item.caption}
+                          </span>
+                          <span className="lang-en-only">
+                            {item.caption || item.captionBn}
+                          </span>
+                        </p>
+                      )}
+                      {item.year && (
+                        <p className="text-[#D4AF37] text-[10px] sm:text-xs font-semibold font-heading mt-0.5">
+                          {item.year}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              </ScrollReveal>
+            ))}
           </div>
         ) : (
-          <div className="text-center py-16 glass-panel rounded-3xl p-6 sm:p-8 max-w-lg mx-auto border border-[#D4AF37]/20 shadow-xl">
-            <ImageIcon size={56} className="text-[#D4AF37] mx-auto mb-4" />
-            <p className="text-white font-heading text-lg font-medium">
-              সিএমএস-এ ছবি যোগ করার পর এখানে প্রদর্শিত হবে।
+          <div className="text-center py-14 glass-panel rounded-3xl p-6 max-w-lg mx-auto border border-[#D4AF37]/20 shadow-xl">
+            <ImageIcon size={48} className="text-[#D4AF37] mx-auto mb-3" />
+            <p className="text-white font-heading text-base sm:text-lg font-medium">
+              <span className="lang-bn-only">
+                এই ক্যাটাগরিতে এখনো কোনো ছবি যোগ করা হয়নি।
+              </span>
+              <span className="lang-en-only">
+                No photos added to this category yet.
+              </span>
             </p>
           </div>
         )}
 
-        <ScrollReveal className="text-center mt-12 sm:mt-14">
+        {/* View More Button (Dynamically links to matching tab parameter) */}
+        <ScrollReveal className="text-center mt-10 sm:mt-14">
           <Link
-            href="/gallery"
-            className="inline-flex items-center gap-3 min-h-[48px] px-8 py-4 bg-[#f42a41] hover:bg-[#d81e34] text-white rounded-full font-bold font-heading text-base shadow-[0_8px_24px_rgba(244,42,65,0.35)] hover:scale-105 transition-all duration-300 group border border-white/20"
+            href={`/gallery?tab=${activeTab}`}
+            className="inline-flex items-center gap-2.5 min-h-[48px] px-8 py-3.5 bg-[#f42a41] hover:bg-[#d81e34] text-white rounded-full font-bold font-heading text-sm sm:text-base shadow-[0_8px_24px_rgba(244,42,65,0.35)] hover:scale-105 transition-all duration-300 group border border-white/20"
           >
-            <span className="font-heading lang-bn-only">সম্পূর্ণ গ্যালারি দেখুন</span>
-            <span className="lang-en-only">View Full Gallery</span>
+            <span className="font-heading lang-bn-only">আরও ছবি দেখুন</span>
+            <span className="lang-en-only">View More Photos</span>
             <ArrowRight
-              size={20}
+              size={18}
               className="group-hover:translate-x-1.5 transition-transform shrink-0"
             />
           </Link>
         </ScrollReveal>
       </div>
+
+      {/* Lightbox Modal */}
+      <GalleryLightbox
+        items={displayImages}
+        currentIndex={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onNavigate={(idx) => setLightboxIndex(idx)}
+      />
     </section>
   );
 }

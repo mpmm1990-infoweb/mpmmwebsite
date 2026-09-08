@@ -2,35 +2,20 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { motion } from "framer-motion";
 import { urlFor } from "@/sanity/image";
 import ScrollReveal from "./ScrollReveal";
-
-interface GalleryItem {
-  _id: string;
-  image: {
-    asset: { _ref: string };
-  };
-  caption?: string;
-  captionBn?: string;
-  year?: string;
-  category?: string;
-}
+import GalleryLightbox, { GalleryLightboxItem } from "./GalleryLightbox";
 
 interface GalleryGridProps {
-  images: GalleryItem[];
+  images: GalleryLightboxItem[];
   showFilter?: boolean;
 }
 
 const categories = [
   { value: "all", labelBn: "সকল", labelEn: "All" },
-  { value: "events", labelBn: "অনুষ্ঠান", labelEn: "Events" },
-  { value: "training", labelBn: "প্রশিক্ষণ", labelEn: "Training" },
-  { value: "reunions", labelBn: "পুনর্মিলনী", labelEn: "Reunions" },
-  { value: "ceremonies", labelBn: "প্যারেড", labelEn: "Ceremonies" },
-  { value: "historical", labelBn: "ঐতিহাসিক", labelEn: "Historical" },
-  { value: "other", labelBn: "অন্যান্য", labelEn: "Other" },
+  { value: "90s", labelBn: "৯০-এর অ্যালবাম", labelEn: "90s Vintage Album" },
+  { value: "historic", labelBn: "ঐতিহাসিক গ্যালারি", labelEn: "Historic Gallery" },
 ];
 
 export default function GalleryGrid({
@@ -38,12 +23,20 @@ export default function GalleryGrid({
   showFilter = false,
 }: GalleryGridProps) {
   const [filter, setFilter] = useState("all");
-  const [lightbox, setLightbox] = useState<GalleryItem | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const filtered =
     filter === "all"
       ? images
-      : images.filter((img) => img.category === filter);
+      : images.filter((img) => {
+          if (filter === "historic") {
+            return img.category === "historic" || img.category === "historical";
+          }
+          if (filter === "90s") {
+            return img.category === "90s" || !img.category || (img.category !== "historic" && img.category !== "historical");
+          }
+          return img.category === filter;
+        });
 
   return (
     <>
@@ -54,7 +47,7 @@ export default function GalleryGrid({
             <button
               key={cat.value}
               onClick={() => setFilter(cat.value)}
-              className={`px-4 sm:px-5 py-2.5 min-h-[44px] rounded-2xl text-xs sm:text-sm font-bold transition-all duration-300 font-heading ${
+              className={`px-5 py-2.5 min-h-[44px] rounded-2xl text-xs sm:text-sm font-bold transition-all duration-300 font-heading ${
                 filter === cat.value
                   ? "bg-[#f42a41] text-white shadow-[0_8px_24px_rgba(244,42,65,0.35)] border border-white/30"
                   : "glass-panel text-white/80 hover:bg-white/15 border border-[#D4AF37]/25"
@@ -68,42 +61,46 @@ export default function GalleryGrid({
       )}
 
       {/* Gallery Grid */}
-      <div className="gallery-grid">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5">
         {filtered.map((item, index) => (
           <ScrollReveal
             key={item._id}
-            delay={index * 0.05}
-            duration={0.5}
+            delay={Math.min(index * 0.04, 0.4)}
+            duration={0.4}
           >
             <motion.div
-              className="relative rounded-2xl overflow-hidden cursor-pointer group glass-panel border border-[#D4AF37]/20 shadow-heritage"
-              whileHover={{ scale: 1.03 }}
-              transition={{ duration: 0.3 }}
-              onClick={() => setLightbox(item)}
+              className="relative aspect-square w-full rounded-2xl overflow-hidden cursor-pointer group glass-panel border border-[#D4AF37]/20 shadow-heritage"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.25 }}
+              onClick={() => setLightboxIndex(index)}
             >
               {item.image?.asset && (
                 <Image
                   src={urlFor(item.image)
                     .width(600)
+                    .height(600)
                     .quality(85)
                     .url()}
-                  alt={item.caption || "Gallery image"}
-                  width={600}
-                  height={400}
-                  className="w-full h-auto rounded-2xl group-hover:scale-105 transition-transform duration-700"
-                  sizes="(max-width: 768px) 50vw, 25vw"
+                  alt={item.captionBn || item.caption || "Gallery image"}
+                  fill
+                  className="aspect-square object-cover rounded-2xl group-hover:scale-105 transition-transform duration-700"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 />
               )}
 
               {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-[#060E1F]/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#060E1F]/90 via-[#060E1F]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                 <div>
-                  <p className="text-white text-base font-bold font-heading leading-snug">
-                    <span className="lang-bn-only">{item.captionBn || item.caption}</span>
-                    <span className="lang-en-only">{item.caption || item.captionBn}</span>
-                  </p>
+                  {(item.caption || item.captionBn) && (
+                    <p className="text-white text-xs sm:text-sm font-bold font-heading leading-snug line-clamp-2">
+                      <span className="lang-bn-only">{item.captionBn || item.caption}</span>
+                      <span className="lang-en-only">{item.caption || item.captionBn}</span>
+                    </p>
+                  )}
                   {item.year && (
-                    <p className="text-[#D4AF37] text-xs mt-1 font-bold font-heading uppercase tracking-widest">{item.year}</p>
+                    <p className="text-[#D4AF37] text-[11px] sm:text-xs mt-1 font-bold font-heading uppercase tracking-wider">
+                      {item.year}
+                    </p>
                   )}
                 </div>
               </div>
@@ -112,59 +109,13 @@ export default function GalleryGrid({
         ))}
       </div>
 
-      {/* Lightbox Modal */}
-      <AnimatePresence>
-        {lightbox && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-[#060E1F]/95 backdrop-blur-xl flex items-center justify-center p-4"
-            onClick={() => setLightbox(null)}
-          >
-            <button
-              className="absolute top-6 right-6 text-white/80 hover:text-[#D4AF37] transition-colors z-20 bg-white/10 p-2 rounded-full border border-white/20 min-h-[44px] min-w-[44px] flex items-center justify-center"
-              onClick={() => setLightbox(null)}
-              aria-label="Close lightbox"
-            >
-              <X size={28} />
-            </button>
-
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="max-w-4xl max-h-[85vh] relative glass-panel-dark rounded-3xl p-3 border border-[#D4AF37]/30 shadow-2xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {lightbox.image?.asset && (
-                <Image
-                  src={urlFor(lightbox.image)
-                    .width(1200)
-                    .quality(90)
-                    .url()}
-                  alt={lightbox.captionBn || lightbox.caption || "Gallery image"}
-                  width={1200}
-                  height={800}
-                  className="max-h-[75vh] w-auto rounded-2xl object-contain mx-auto"
-                />
-              )}
-
-              {(lightbox.caption || lightbox.captionBn || lightbox.year) && (
-                <div className="p-4 bg-[#060E1F]/95 backdrop-blur-md rounded-b-2xl border-t border-white/10 mt-2">
-                  <p className="text-white font-bold text-lg font-heading">
-                    <span className="lang-bn-only">{lightbox.captionBn || lightbox.caption}</span>
-                    <span className="lang-en-only">{lightbox.caption || lightbox.captionBn}</span>
-                  </p>
-                  {lightbox.year && (
-                    <p className="text-[#D4AF37] text-sm mt-1 font-bold font-heading">{lightbox.year}</p>
-                  )}
-                </div>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Lightbox Modal with Next/Previous Controls */}
+      <GalleryLightbox
+        items={filtered}
+        currentIndex={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onNavigate={(idx) => setLightboxIndex(idx)}
+      />
     </>
   );
 }
