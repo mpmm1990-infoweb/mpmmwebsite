@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { ImageIcon } from "lucide-react";
 import { urlFor } from "@/sanity/image";
@@ -93,32 +92,32 @@ export default function GalleryClient({ images }: GalleryClientProps) {
         </div>
       </div>
 
-      {/* Gallery Grid */}
+      {/* Gallery Grid - Masonry */}
       {filteredImages.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5 md:gap-6">
+        <div className="columns-2 sm:columns-3 md:columns-4 gap-3 sm:gap-5 md:gap-6">
           {filteredImages.map((item, index) => (
             <ScrollReveal
               key={item._id}
               delay={Math.min(index * 0.04, 0.4)}
               duration={0.4}
+              className="mb-3 sm:mb-5 md:mb-6 break-inside-avoid"
             >
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.25 }}
-                className="relative aspect-square w-full rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group glass-panel border border-[#D4AF37]/25 shadow-lg"
+                className="relative w-full rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group glass-panel border border-[#D4AF37]/25 shadow-lg"
                 onClick={() => setLightboxIndex(index)}
               >
                 {item.image?.asset && (
-                  <Image
+                  <img
                     src={urlFor(item.image)
                       .width(600)
-                      .height(600)
                       .quality(85)
+                      .auto("format")
                       .url()}
                     alt={item.captionBn || item.caption || "Gallery photo"}
-                    fill
-                    className="aspect-square object-cover rounded-xl sm:rounded-2xl group-hover:scale-105 transition-transform duration-700"
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    loading="lazy"
+                    className="w-full h-auto block rounded-xl sm:rounded-2xl group-hover:scale-105 transition-transform duration-700"
                   />
                 )}
 

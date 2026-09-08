@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { urlFor } from "@/sanity/image";
@@ -77,32 +76,32 @@ export default function GalleryPreview({ data }: GalleryPreviewProps) {
           </div>
         </div>
 
-        {/* Strict 6-Item Grid — 3 Columns on ALL screen sizes */}
+        {/* Strict 6-Item Masonry Layout — 2 or 3 Columns */}
         {displayImages.length > 0 ? (
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-5 mt-6">
+          <div className="columns-2 md:columns-3 gap-2 sm:gap-4 md:gap-5 mt-6">
             {displayImages.map((item, index) => (
               <ScrollReveal
                 key={item._id}
                 delay={index * 0.05}
                 duration={0.4}
+                className="mb-2 sm:mb-4 md:mb-5 break-inside-avoid"
               >
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
-                  className="relative aspect-square w-full rounded-md sm:rounded-xl overflow-hidden cursor-pointer group glass-panel border border-[#D4AF37]/30 shadow-md"
+                  className="relative w-full rounded-md sm:rounded-xl overflow-hidden cursor-pointer group glass-panel border border-[#D4AF37]/30 shadow-md"
                   onClick={() => setLightboxIndex(index)}
                 >
                   {item.image?.asset && (
-                    <Image
+                    <img
                       src={urlFor(item.image)
                         .width(600)
-                        .height(600)
                         .quality(85)
+                        .auto("format")
                         .url()}
                       alt={item.captionBn || item.caption || "Gallery image"}
-                      fill
-                      className="aspect-square object-cover rounded-md sm:rounded-xl group-hover:scale-105 transition-transform duration-500"
-                      sizes="(max-width: 768px) 33vw, 30vw"
+                      loading="lazy"
+                      className="w-full h-auto block rounded-md sm:rounded-xl group-hover:scale-105 transition-transform duration-500"
                     />
                   )}
 
