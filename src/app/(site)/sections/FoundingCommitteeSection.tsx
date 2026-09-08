@@ -46,7 +46,7 @@ export default function FoundingCommitteeSection({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeading
           title="Founding Committee"
-          titleBn="প্রতিষ্ঠাতা ও পরিচালনা পর্ষদ"
+          titleBn="প্রতিষ্ঠাতা কমিটি"
           subtitle="The visionary leaders who built and continue to steward our legacy."
           subtitleBn="যাঁদের দূরদর্শিতা ও নেতৃত্বে আমাদের এই ঐতিহ্যবাহী সংগঠন গড়ে উঠেছে।"
         />
@@ -60,21 +60,21 @@ export default function FoundingCommitteeSection({
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               className="relative flex flex-col items-center text-center max-w-xl w-full"
             >
-              {/* Outer Gold Ring Glow */}
+              {/* Outer Gold Frame Glow */}
               <div className="relative mb-6">
-                <div className="absolute inset-0 rounded-full bg-[#D4AF37]/30 blur-2xl scale-125 pointer-events-none" />
-                <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-full border-4 border-[#D4AF37] shadow-[0_0_40px_rgba(212,175,55,0.5)] overflow-hidden bg-[#0B1B3D]">
+                <div className="absolute inset-0 rounded-2xl bg-[#D4AF37]/25 blur-2xl scale-110 pointer-events-none" />
+                <div className="relative w-44 h-44 sm:w-52 sm:h-52 md:w-60 md:h-60 aspect-square rounded-xl sm:rounded-2xl border-2 sm:border-4 border-[#D4AF37] shadow-[0_0_35px_rgba(212,175,55,0.45)] overflow-hidden bg-[#0B1B3D]">
                   {superAdmin.image?.asset ? (
                     <Image
                       src={urlFor(superAdmin.image)
-                        .width(400)
-                        .height(400)
+                        .width(600)
+                        .height(600)
                         .quality(90)
                         .url()}
                       alt={superAdmin.nameBn || superAdmin.name || "Founder"}
                       fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 144px, (max-width: 768px) 176px, 208px"
+                      className="aspect-square object-cover rounded-lg sm:rounded-xl"
+                      sizes="(max-width: 640px) 176px, (max-width: 768px) 208px, 240px"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-[#D4AF37]">
