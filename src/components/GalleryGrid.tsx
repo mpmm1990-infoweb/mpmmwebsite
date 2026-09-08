@@ -14,8 +14,21 @@ interface GalleryGridProps {
 
 const categories = [
   { value: "all", labelBn: "সকল", labelEn: "All" },
-  { value: "90s", labelBn: "৯০-এর অ্যালবাম", labelEn: "90s Vintage Album" },
-  { value: "historic", labelBn: "ঐতিহাসিক গ্যালারি", labelEn: "Historic Gallery" },
+  {
+    value: "90s_photos",
+    labelBn: "৯০-এর স্মৃতি অ্যালবাম",
+    labelEn: "90s Photos",
+  },
+  {
+    value: "group_activities",
+    labelBn: "গ্রুপ অ্যাক্টিভিটিস",
+    labelEn: "Group Activities",
+  },
+  {
+    value: "social_works",
+    labelBn: "সামাজিক কার্যক্রম",
+    labelEn: "Social Works",
+  },
 ];
 
 export default function GalleryGrid({
@@ -28,15 +41,7 @@ export default function GalleryGrid({
   const filtered =
     filter === "all"
       ? images
-      : images.filter((img) => {
-          if (filter === "historic") {
-            return img.category === "historic" || img.category === "historical";
-          }
-          if (filter === "90s") {
-            return img.category === "90s" || !img.category || (img.category !== "historic" && img.category !== "historical");
-          }
-          return img.category === filter;
-        });
+      : images.filter((img) => img.category === filter);
 
   return (
     <>
@@ -93,8 +98,12 @@ export default function GalleryGrid({
                 <div>
                   {(item.caption || item.captionBn) && (
                     <p className="text-white text-xs sm:text-sm font-bold font-heading leading-snug line-clamp-2">
-                      <span className="lang-bn-only">{item.captionBn || item.caption}</span>
-                      <span className="lang-en-only">{item.caption || item.captionBn}</span>
+                      <span className="lang-bn-only">
+                        {item.captionBn || item.caption}
+                      </span>
+                      <span className="lang-en-only">
+                        {item.caption || item.captionBn}
+                      </span>
                     </p>
                   )}
                   {item.year && (

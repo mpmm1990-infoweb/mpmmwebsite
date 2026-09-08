@@ -12,77 +12,72 @@ import GalleryLightbox, {
   GalleryLightboxItem,
 } from "@/components/GalleryLightbox";
 
+type GalleryTab = "90s_photos" | "group_activities" | "social_works";
+
 interface GalleryPreviewProps {
   data: unknown[];
 }
 
+const TABS: { value: GalleryTab; labelBn: string; labelEn: string }[] = [
+  {
+    value: "90s_photos",
+    labelBn: "৯০-এর স্মৃতি অ্যালবাম",
+    labelEn: "90s Photos",
+  },
+  {
+    value: "group_activities",
+    labelBn: "গ্রুপ অ্যাক্টিভিটিস",
+    labelEn: "Group Activities",
+  },
+  {
+    value: "social_works",
+    labelBn: "সামাজিক কার্যক্রম",
+    labelEn: "Social Works",
+  },
+];
+
 export default function GalleryPreview({ data }: GalleryPreviewProps) {
   const images = (data || []) as GalleryLightboxItem[];
-  const [activeTab, setActiveTab] = useState<"90s" | "historic">("90s");
+  const [activeTab, setActiveTab] = useState<GalleryTab>("90s_photos");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Filter based on selected category tab
-  const filteredImages = images.filter((img) => {
-    if (activeTab === "historic") {
-      return img.category === "historic" || img.category === "historical";
-    }
-    // Default '90s': Include explicit '90s', or items without category, or other vintage items
-    return (
-      img.category === "90s" ||
-      !img.category ||
-      (img.category !== "historic" && img.category !== "historical")
-    );
-  });
+  // Filter based on selected category tab — exact match only
+  const filteredImages = images.filter(
+    (img) => img.category === activeTab
+  );
 
-  // Strict 6 Items Limit
+  // Strict 6-item limit for homepage preview
   const displayImages = filteredImages.slice(0, 6);
 
   return (
     <section className="py-16 sm:py-20 md:py-28 heritage-pattern w-full max-w-full overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          title="Photo Archives"
-          titleBn="ছবি ও স্মৃতির অ্যালবাম"
-        />
+        <SectionHeading title="Gallery" titleBn="গ্যালারি" />
 
-        {/* Tab Switcher: Pill Toggle */}
+        {/* 3-Slot Segmented Tab Switcher (Pill Style) */}
         <div className="flex justify-center mb-8 sm:mb-10">
-          <div className="inline-flex p-1.5 rounded-full bg-[#060E1F]/90 border border-[#D4AF37]/30 backdrop-blur-xl shadow-xl">
-            {/* Tab 1: 90s Vintage Album (Default Selected) */}
-            <button
-              onClick={() => {
-                setActiveTab("90s");
-                setLightboxIndex(null);
-              }}
-              className={`px-4 sm:px-7 py-2.5 rounded-full text-xs sm:text-sm md:text-base font-bold transition-all duration-300 font-heading ${
-                activeTab === "90s"
-                  ? "bg-gradient-to-r from-[#006a4e] to-[#008764] text-white shadow-[0_0_15px_rgba(0,106,78,0.6)] border border-[#D4AF37]/60"
-                  : "text-[#C2CFC8] hover:text-white hover:bg-white/5"
-              }`}
-            >
-              <span className="lang-bn-only">৯০-এর স্মৃতি অ্যালবাম</span>
-              <span className="lang-en-only">90s Vintage Album</span>
-            </button>
-
-            {/* Tab 2: Historic Gallery */}
-            <button
-              onClick={() => {
-                setActiveTab("historic");
-                setLightboxIndex(null);
-              }}
-              className={`px-4 sm:px-7 py-2.5 rounded-full text-xs sm:text-sm md:text-base font-bold transition-all duration-300 font-heading ${
-                activeTab === "historic"
-                  ? "bg-gradient-to-r from-[#006a4e] to-[#008764] text-white shadow-[0_0_15px_rgba(0,106,78,0.6)] border border-[#D4AF37]/60"
-                  : "text-[#C2CFC8] hover:text-white hover:bg-white/5"
-              }`}
-            >
-              <span className="lang-bn-only">ঐতিহাসিক গ্যালারি</span>
-              <span className="lang-en-only">Historic Gallery</span>
-            </button>
+          <div className="inline-flex p-1.5 rounded-full bg-[#060E1F]/90 border border-[#D4AF37]/30 backdrop-blur-xl shadow-xl gap-1">
+            {TABS.map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => {
+                  setActiveTab(tab.value);
+                  setLightboxIndex(null);
+                }}
+                className={`px-3 sm:px-5 md:px-7 py-2.5 rounded-full text-[11px] sm:text-sm md:text-base font-bold transition-all duration-300 font-heading whitespace-nowrap ${
+                  activeTab === tab.value
+                    ? "bg-gradient-to-r from-[#006a4e] to-[#008764] text-white shadow-[0_0_15px_rgba(0,106,78,0.6)] border border-[#D4AF37]/60"
+                    : "text-[#C2CFC8] hover:text-white hover:bg-white/5"
+                }`}
+              >
+                <span className="lang-bn-only">{tab.labelBn}</span>
+                <span className="lang-en-only">{tab.labelEn}</span>
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Strict 6 Items Grid (3 Columns on Desktop & Mobile) */}
+        {/* Strict 6-Item Grid — 3 Columns on ALL screen sizes */}
         {displayImages.length > 0 ? (
           <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-5 mt-6">
             {displayImages.map((item, index) => (
@@ -140,7 +135,7 @@ export default function GalleryPreview({ data }: GalleryPreviewProps) {
             <ImageIcon size={48} className="text-[#D4AF37] mx-auto mb-3" />
             <p className="text-white font-heading text-base sm:text-lg font-medium">
               <span className="lang-bn-only">
-                এই ক্যাটাগরিতে এখনো কোনো ছবি যোগ করা হয়নি।
+                এই ক্যাটাগরিতে এখনো কোনো ছবি যোগ করা হয়নি।
               </span>
               <span className="lang-en-only">
                 No photos added to this category yet.
@@ -149,7 +144,7 @@ export default function GalleryPreview({ data }: GalleryPreviewProps) {
           </div>
         )}
 
-        {/* View More Button (Dynamically links to matching tab parameter) */}
+        {/* View More Button — links to matching gallery tab */}
         <ScrollReveal className="text-center mt-10 sm:mt-14">
           <Link
             href={`/gallery?tab=${activeTab}`}

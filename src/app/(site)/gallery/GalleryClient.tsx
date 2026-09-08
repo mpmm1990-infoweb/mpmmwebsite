@@ -11,30 +11,56 @@ import GalleryLightbox, {
   GalleryLightboxItem,
 } from "@/components/GalleryLightbox";
 
+type GalleryTab = "90s_photos" | "group_activities" | "social_works";
+
 interface GalleryClientProps {
   images: GalleryLightboxItem[];
+}
+
+const TABS: { value: GalleryTab; labelBn: string; labelEn: string }[] = [
+  {
+    value: "90s_photos",
+    labelBn: "৯০-এর স্মৃতি অ্যালবাম",
+    labelEn: "90s Photos",
+  },
+  {
+    value: "group_activities",
+    labelBn: "গ্রুপ অ্যাক্টিভিটিস",
+    labelEn: "Group Activities",
+  },
+  {
+    value: "social_works",
+    labelBn: "সামাজিক কার্যক্রম",
+    labelEn: "Social Works",
+  },
+];
+
+const VALID_TABS: GalleryTab[] = ["90s_photos", "group_activities", "social_works"];
+
+function isValidTab(value: string | null): value is GalleryTab {
+  return VALID_TABS.includes(value as GalleryTab);
 }
 
 export default function GalleryClient({ images }: GalleryClientProps) {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
 
-  // Read initial tab from URL query param; default to '90s'
-  const [activeTab, setActiveTab] = useState<"90s" | "historic">(() => {
-    return tabParam === "historic" ? "historic" : "90s";
+  // Read initial tab from URL query param; default to '90s_photos'
+  const [activeTab, setActiveTab] = useState<GalleryTab>(() => {
+    return isValidTab(tabParam) ? tabParam : "90s_photos";
   });
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Sync tab with URL if searchParams change
+  // Sync tab with URL if searchParams change (e.g. browser back/forward)
   useEffect(() => {
-    if (tabParam === "historic" || tabParam === "90s") {
+    if (isValidTab(tabParam)) {
       setActiveTab(tabParam);
     }
   }, [tabParam]);
 
-  // Tab change handler with URL sync
-  const handleTabChange = (tab: "90s" | "historic") => {
+  // Tab change handler — updates URL without page reload
+  const handleTabChange = (tab: GalleryTab) => {
     setActiveTab(tab);
     setLightboxIndex(null);
     if (typeof window !== "undefined") {
@@ -42,48 +68,28 @@ export default function GalleryClient({ images }: GalleryClientProps) {
     }
   };
 
-  // Filter based on selected category
-  const filteredImages = images.filter((img) => {
-    if (activeTab === "historic") {
-      return img.category === "historic" || img.category === "historical";
-    }
-    return (
-      img.category === "90s" ||
-      !img.category ||
-      (img.category !== "historic" && img.category !== "historical")
-    );
-  });
+  // Exact category match filter
+  const filteredImages = images.filter((img) => img.category === activeTab);
 
   return (
     <>
-      {/* Category Filter Tabs */}
+      {/* 3-Slot Segmented Category Tabs */}
       <div className="flex justify-center mb-10 sm:mb-14">
-        <div className="inline-flex p-1.5 rounded-full bg-[#060E1F]/90 border border-[#D4AF37]/30 backdrop-blur-xl shadow-2xl">
-          {/* Tab 1: 90s Vintage Album */}
-          <button
-            onClick={() => handleTabChange("90s")}
-            className={`px-5 sm:px-8 py-3 rounded-full text-xs sm:text-sm md:text-base font-bold transition-all duration-300 font-heading ${
-              activeTab === "90s"
-                ? "bg-gradient-to-r from-[#006a4e] to-[#008764] text-white shadow-[0_0_18px_rgba(0,106,78,0.7)] border border-[#D4AF37]/60"
-                : "text-[#C2CFC8] hover:text-white hover:bg-white/5"
-            }`}
-          >
-            <span className="lang-bn-only">৯০-এর স্মৃতি অ্যালবাম</span>
-            <span className="lang-en-only">90s Vintage Album</span>
-          </button>
-
-          {/* Tab 2: Historic Gallery */}
-          <button
-            onClick={() => handleTabChange("historic")}
-            className={`px-5 sm:px-8 py-3 rounded-full text-xs sm:text-sm md:text-base font-bold transition-all duration-300 font-heading ${
-              activeTab === "historic"
-                ? "bg-gradient-to-r from-[#006a4e] to-[#008764] text-white shadow-[0_0_18px_rgba(0,106,78,0.7)] border border-[#D4AF37]/60"
-                : "text-[#C2CFC8] hover:text-white hover:bg-white/5"
-            }`}
-          >
-            <span className="lang-bn-only">ঐতিহাসিক গ্যালারি</span>
-            <span className="lang-en-only">Historic Gallery</span>
-          </button>
+        <div className="inline-flex p-1.5 rounded-full bg-[#060E1F]/90 border border-[#D4AF37]/30 backdrop-blur-xl shadow-2xl gap-1">
+          {TABS.map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => handleTabChange(tab.value)}
+              className={`px-3 sm:px-6 md:px-8 py-3 rounded-full text-[11px] sm:text-sm md:text-base font-bold transition-all duration-300 font-heading whitespace-nowrap ${
+                activeTab === tab.value
+                  ? "bg-gradient-to-r from-[#006a4e] to-[#008764] text-white shadow-[0_0_18px_rgba(0,106,78,0.7)] border border-[#D4AF37]/60"
+                  : "text-[#C2CFC8] hover:text-white hover:bg-white/5"
+              }`}
+            >
+              <span className="lang-bn-only">{tab.labelBn}</span>
+              <span className="lang-en-only">{tab.labelEn}</span>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -146,7 +152,7 @@ export default function GalleryClient({ images }: GalleryClientProps) {
           <ImageIcon size={56} className="text-[#D4AF37] mx-auto mb-4" />
           <p className="text-white text-lg sm:text-xl font-bold font-heading">
             <span className="lang-bn-only">
-              এই ক্যাটাগরিতে এখনো কোনো ছবি যোগ করা হয়নি।
+              এই ক্যাটাগরিতে এখনো কোনো ছবি যোগ করা হয়নি।
             </span>
             <span className="lang-en-only">
               No photos added to this category yet.
