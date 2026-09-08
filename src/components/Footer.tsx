@@ -7,6 +7,8 @@ import { Mail, Phone, MapPin, X, User } from "lucide-react";
 import { urlFor } from "@/sanity/image";
 
 interface FooterProps {
+  siteTitle?: string;
+  siteTitleBn?: string;
   footerText?: string;
   footerTextBn?: string;
   contactEmail?: string;
@@ -26,6 +28,8 @@ interface FooterProps {
 }
 
 export default function Footer({
+  siteTitle,
+  siteTitleBn,
   footerText = "Modern Police Memorial Museum - First Batch 1990",
   footerTextBn = "আধুনিক পুলিশ স্মৃতি জাদুঘর - প্রথম ব্যাচ ১৯৯০",
   contactEmail,
@@ -48,6 +52,10 @@ export default function Footer({
   const hasAdminPanel =
     footerAdminName || footerAdminNameBn;
 
+  // Dynamic brand title from Sanity siteSettings
+  const displayBrandTitleBn = footerTextBn || siteTitleBn;
+  const displayBrandTitleEn = footerText || siteTitle;
+
   return (
     <>
       {/* ─────────────── Footer ─────────────── */}
@@ -60,19 +68,13 @@ export default function Footer({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 lg:gap-10">
 
-              {/* About Column */}
+              {/* Brand Column — 100% Dynamic from Sanity siteSettings */}
               <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="text-2xl font-bold text-[#D4AF37] font-heading">
-                    🇧🇩 PPMP
-                  </span>
-                </div>
-                <p className="text-base leading-relaxed font-heading mb-2 text-white font-medium lang-bn-only">
-                  {footerTextBn}
-                </p>
-                <p className="text-base leading-relaxed font-heading mb-2 text-white font-medium lang-en-only">
-                  {footerText}
-                </p>
+                <h3 className="text-xl sm:text-2xl font-bold text-[#D4AF37] font-heading leading-snug mb-3 tracking-wide">
+                  <span className="lang-bn-only">{displayBrandTitleBn}</span>
+                  <span className="lang-en-only">{displayBrandTitleEn}</span>
+                </h3>
+                <div className="w-12 h-[2px] bg-gradient-to-r from-[#D4AF37] to-transparent rounded-full mb-4" />
               </div>
 
               {/* Quick Links */}
