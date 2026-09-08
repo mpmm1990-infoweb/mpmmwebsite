@@ -13,6 +13,8 @@ export interface BookData {
   coverImage?: { asset: { _ref: string } };
   price?: number;
   isFree?: boolean;
+  pdfUrl?: string;
+  externalLink?: string;
   author?: string;
   publishYear?: string;
   pageCount?: number;

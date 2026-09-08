@@ -18,6 +18,8 @@ interface BookData {
   descriptionBn?: string;
   price?: number;
   isFree?: boolean;
+  pdfUrl?: string;
+  externalLink?: string;
   pdfFile?: { asset: { url: string } };
   supabasePdfPath?: string;
   author?: string;
@@ -78,6 +80,8 @@ export default async function BookDetailPage({
   if (!book) {
     notFound();
   }
+
+  const downloadUrl = book.externalLink || book.pdfUrl || book.pdfFile?.asset?.url || "";
 
   return (
     <div className="w-full max-w-full overflow-x-hidden">
@@ -190,7 +194,7 @@ export default async function BookDetailPage({
                   )}
                 </div>
 
-                {/* Detail Badges (Author removed to prevent duplicate display) */}
+                {/* Detail Badges */}
                 <div className="flex flex-wrap gap-3">
                   {book.publishYear && (
                     <div className="flex items-center gap-2 bg-white/5 border border-[#D4AF37]/25 px-4 py-2.5 rounded-2xl">
@@ -227,6 +231,7 @@ export default async function BookDetailPage({
                     bookTitleBn={book.titleBn || book.title || ""}
                     price={book.price || 0}
                     isFree={book.isFree || false}
+                    downloadUrl={downloadUrl}
                   />
                 </div>
 

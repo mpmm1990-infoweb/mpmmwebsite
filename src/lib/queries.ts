@@ -95,6 +95,8 @@ export const BOOKS_QUERY = `*[_type == "book"] | order(order asc){
   descriptionBn,
   price,
   isFree,
+  externalLink,
+  "pdfUrl": pdfFile.asset->url,
   author,
   publishYear,
   pageCount,
@@ -109,6 +111,8 @@ export const BOOKS_PREVIEW_QUERY = `*[_type == "book"] | order(order asc)[0...3]
   coverImage,
   price,
   isFree,
+  externalLink,
+  "pdfUrl": pdfFile.asset->url,
   author
 }`;
 
@@ -122,10 +126,11 @@ export const BOOK_BY_SLUG_QUERY = `*[_type == "book" && slug.current == $slug][0
   descriptionBn,
   price,
   isFree,
+  externalLink,
+  "pdfUrl": pdfFile.asset->url,
   pdfFile{
     asset->{url}
   },
-  externalLink,
   author,
   publishYear,
   pageCount
@@ -139,6 +144,8 @@ export const RELATED_BOOKS_QUERY = `*[_type == "book" && slug.current != $slug] 
   coverImage,
   price,
   isFree,
+  externalLink,
+  "pdfUrl": pdfFile.asset->url,
   author
 }`;
 

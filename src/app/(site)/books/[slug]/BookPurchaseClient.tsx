@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, ShoppingCart } from "lucide-react";
+import { Download, ShoppingCart, AlertCircle } from "lucide-react";
 import PaymentModal from "@/components/PaymentModal";
 
 interface BookPurchaseClientProps {
@@ -11,6 +11,7 @@ interface BookPurchaseClientProps {
   bookTitleBn?: string;
   price: number;
   isFree: boolean;
+  downloadUrl?: string;
   downloadId?: string;
 }
 
@@ -21,23 +22,47 @@ export default function BookPurchaseClient({
   bookTitleBn,
   price,
   isFree,
+  downloadUrl,
   downloadId,
 }: BookPurchaseClientProps) {
   const [showModal, setShowModal] = useState(false);
 
-  // ─── FREE BOOK: Secure server-side download link ───────────────────────────
+  // ─── FREE BOOK: Direct download or external drive link ──────────────────────
   if (isFree) {
-    const href = downloadId ? `/api/download/${downloadId}` : "#";
+    const finalDownloadUrl = downloadUrl || (downloadId ? `/api/download/${downloadId}` : "");
+
+    if (!finalDownloadUrl) {
+      return (
+        <div className="inline-flex flex-col sm:flex-row items-start sm:items-center gap-2">
+          <button
+            type="button"
+            disabled
+            className="inline-flex items-center justify-center gap-3 min-h-[48px] px-6 sm:px-8 py-3.5 sm:py-4 bg-white/10 text-[#C2CFC8] rounded-2xl font-bold font-heading border border-white/15 text-sm sm:text-base cursor-not-allowed opacity-80"
+          >
+            <Download size={20} className="shrink-0 text-[#D4AF37]" />
+            <span className="lang-bn-only">পিডিএফটি ডাউনলোড করুন</span>
+            <span className="lang-en-only">Download PDF</span>
+          </button>
+          <span className="text-xs text-[#D4AF37] font-heading flex items-center gap-1">
+            <AlertCircle size={14} />
+            <span className="lang-bn-only">ডাউনলোড ফাইল শীঘ্রই যুক্ত করা হবে</span>
+            <span className="lang-en-only">Download link coming soon</span>
+          </span>
+        </div>
+      );
+    }
+
     return (
       <a
-        href={href}
+        href={finalDownloadUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center justify-center gap-3 min-h-[48px] px-6 sm:px-8 py-3.5 sm:py-4 bg-[#006a4e] hover:bg-[#008764] text-white rounded-2xl font-bold font-heading hover:shadow-lg hover:scale-105 transition-all duration-300 border border-white/20 text-sm sm:text-base w-full sm:w-auto"
+        download
+        className="inline-flex items-center justify-center gap-3 min-h-[48px] px-6 sm:px-8 py-3.5 sm:py-4 bg-[#006a4e] hover:bg-[#008764] text-white rounded-2xl font-bold font-heading hover:shadow-[0_8px_24px_rgba(0,106,78,0.4)] hover:scale-105 transition-all duration-300 border border-white/20 text-sm sm:text-base w-full sm:w-auto shadow-lg"
       >
-        <Mail size={20} className="shrink-0" />
-        <span className="lang-bn-only">ফ্রি পিডিএফ ডাউনলোড করুন</span>
-        <span className="lang-en-only">Download Free PDF</span>
+        <Download size={20} className="shrink-0" />
+        <span className="lang-bn-only">পিডিএফটি ডাউনলোড করুন</span>
+        <span className="lang-en-only">Download PDF</span>
       </a>
     );
   }
