@@ -31,6 +31,7 @@ const defaultNavLinks: NavLink[] = [
   { label: "Library", labelBn: "লাইব্রেরি", href: "/books" },
   { label: "Gallery", labelBn: "গ্যালারি", href: "/gallery" },
   { label: "Words & Verses", labelBn: "কথা ও গাথা", href: "/words-and-verses" },
+  { label: "Welfare Fund", labelBn: "ওয়েলফেয়ার ফান্ড", href: "/#welfare-fund" },
 ];
 
 export default function Navbar({

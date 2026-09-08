@@ -183,3 +183,8 @@ export const KOTHA_O_GATHA_PREVIEW_QUERY = `*[_type == "kothaOGatha" && isApprov
   contentBn,
   photo
 }`;
+
+export const WELFARE_FUND_QUERY = `*[_type == "welfareFund"][0]{
+  totalCollection,
+  totalExpense
+}`;

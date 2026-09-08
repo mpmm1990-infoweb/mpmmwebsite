@@ -5,6 +5,7 @@ import { book } from "./book";
 import { galleryImage } from "./galleryImage";
 import { kothaOGatha } from "./kothaOGatha";
 import { globalSettings } from "./globalSettings";
+import { welfareFund } from "./welfareFund";
 
 export const schemaTypes = [
   hero,
@@ -14,4 +15,5 @@ export const schemaTypes = [
   galleryImage,
   kothaOGatha,
   globalSettings,
+  welfareFund,
 ];

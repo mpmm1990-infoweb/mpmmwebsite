@@ -6,6 +6,7 @@ import {
   BOOKS_PREVIEW_QUERY,
   GALLERY_PREVIEW_QUERY,
   KOTHA_O_GATHA_PREVIEW_QUERY,
+  WELFARE_FUND_QUERY,
 } from "@/lib/queries";
 import HeroSection from "./sections/HeroSection";
 import HistoryPreview from "./sections/HistoryPreview";
@@ -13,6 +14,9 @@ import VideosPreview from "./sections/VideosPreview";
 import BooksPreview from "./sections/BooksPreview";
 import GalleryPreview from "./sections/GalleryPreview";
 import MembersPreview from "./sections/MembersPreview";
+import WelfareFundSection, {
+  WelfareFundData,
+} from "./sections/WelfareFundSection";
 
 // Type definitions
 interface HeroData {
@@ -44,15 +48,25 @@ export default async function HomePage() {
   let books: unknown[] = [];
   let gallery: unknown[] = [];
   let kothaOGathaItems: unknown[] = [];
+  let welfareFund: WelfareFundData | null = null;
 
   try {
-    [hero, history, videos, books, gallery, kothaOGathaItems] = await Promise.all([
+    [
+      hero,
+      history,
+      videos,
+      books,
+      gallery,
+      kothaOGathaItems,
+      welfareFund,
+    ] = await Promise.all([
       sanityFetch<HeroData>(HERO_QUERY, {}, ["hero"]),
       sanityFetch<HistoryData>(HISTORY_QUERY, {}, ["history"]),
       sanityFetch<unknown[]>(VIDEOS_PREVIEW_QUERY, {}, ["video"]),
       sanityFetch<unknown[]>(BOOKS_PREVIEW_QUERY, {}, ["book"]),
       sanityFetch<unknown[]>(GALLERY_PREVIEW_QUERY, {}, ["galleryImage"]),
       sanityFetch<unknown[]>(KOTHA_O_GATHA_PREVIEW_QUERY, {}, ["kothaOGatha"]),
+      sanityFetch<WelfareFundData>(WELFARE_FUND_QUERY, {}, ["welfareFund"]),
     ]);
   } catch {
     // CMS not configured — fallback handles UI
@@ -66,6 +80,7 @@ export default async function HomePage() {
       <BooksPreview data={books || []} />
       <GalleryPreview data={gallery || []} />
       <MembersPreview data={kothaOGathaItems || []} />
+      <WelfareFundSection data={welfareFund} />
     </div>
   );
 }
