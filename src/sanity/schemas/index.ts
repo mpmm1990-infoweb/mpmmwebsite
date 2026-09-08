@@ -6,6 +6,7 @@ import { galleryImage } from "./galleryImage";
 import { kothaOGatha } from "./kothaOGatha";
 import { globalSettings } from "./globalSettings";
 import { welfareFund } from "./welfareFund";
+import { foundingMember } from "./foundingMember";
 
 export const schemaTypes = [
   hero,
@@ -16,4 +17,5 @@ export const schemaTypes = [
   kothaOGatha,
   globalSettings,
   welfareFund,
+  foundingMember,
 ];

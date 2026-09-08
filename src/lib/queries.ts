@@ -23,7 +23,14 @@ export const GLOBAL_SETTINGS_QUERY = `*[_type == "globalSettings"][0]{
   address,
   addressBn,
   facebookUrl,
-  youtubeUrl
+  youtubeUrl,
+  footerAdminName,
+  footerAdminNameBn,
+  footerAdminTitle,
+  footerAdminTitleBn,
+  footerAdminImage,
+  footerAdminBio,
+  footerAdminBioBn
 }`;
 
 export const HERO_QUERY = `*[_type == "hero"][0]{
@@ -187,4 +194,17 @@ export const KOTHA_O_GATHA_PREVIEW_QUERY = `*[_type == "kothaOGatha" && isApprov
 export const WELFARE_FUND_QUERY = `*[_type == "welfareFund"][0]{
   totalCollection,
   totalExpense
+}`;
+
+export const FOUNDING_MEMBERS_QUERY = `*[_type == "foundingMember"] | order(isSuperAdmin desc, order asc){
+  _id,
+  name,
+  nameBn,
+  designation,
+  designationBn,
+  image,
+  bio,
+  bioBn,
+  isSuperAdmin,
+  order
 }`;

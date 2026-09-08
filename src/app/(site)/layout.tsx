@@ -9,7 +9,7 @@ export default async function SiteLayout({
   children: React.ReactNode;
 }) {
   // Fetch global settings from Sanity
-  let settings = null;
+  let settings: Record<string, unknown> | null = null;
   try {
     settings = await sanityFetch<Record<string, unknown>>(
       GLOBAL_SETTINGS_QUERY,
@@ -42,8 +42,20 @@ export default async function SiteLayout({
         contactEmail={settings?.contactEmail as string}
         contactPhone={settings?.contactPhone as string}
         address={settings?.address as string}
+        addressBn={settings?.addressBn as string}
         facebookUrl={settings?.facebookUrl as string}
         youtubeUrl={settings?.youtubeUrl as string}
+        footerAdminName={settings?.footerAdminName as string}
+        footerAdminNameBn={settings?.footerAdminNameBn as string}
+        footerAdminTitle={settings?.footerAdminTitle as string}
+        footerAdminTitleBn={settings?.footerAdminTitleBn as string}
+        footerAdminImage={
+          settings?.footerAdminImage as {
+            asset: { _ref: string };
+          } | null
+        }
+        footerAdminBio={settings?.footerAdminBio as string}
+        footerAdminBioBn={settings?.footerAdminBioBn as string}
       />
     </>
   );
