@@ -69,7 +69,7 @@ export default function WelfareFundSection({ data }: WelfareFundSectionProps) {
       <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-72 h-72 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Heading (No Subtitle as per user requirement) */}
+        {/* Section Heading */}
         <SectionHeading
           title="Welfare Fund Balance"
           titleBn="ওয়েলফেয়ার ফান্ড ব্যালেন্স"
@@ -103,7 +103,7 @@ export default function WelfareFundSection({ data }: WelfareFundSectionProps) {
 
               <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-[#94A59B]">
                 <span className="lang-en-only">All batches & contributors</span>
-                <span className="lang-bn-only">সকল সদস্য ও শুভানুধ্যায়ী</span>
+                <span className="lang-bn-only">সকল সদস্য</span>
                 <span className="text-[#D4AF37] font-semibold">100%</span>
               </div>
             </div>
@@ -135,7 +135,7 @@ export default function WelfareFundSection({ data }: WelfareFundSectionProps) {
 
               <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-[#94A59B]">
                 <span className="lang-en-only">Welfare & support funds</span>
-                <span className="lang-bn-only">চিকিৎসা ও কল্যাণ অনুদান</span>
+                <span className="lang-bn-only">কল্যাণ অনুদান</span>
                 <span className="text-[#f42a41] font-semibold">
                   {expensePercentage.toFixed(1)}%
                 </span>
@@ -172,7 +172,7 @@ export default function WelfareFundSection({ data }: WelfareFundSectionProps) {
 
               <div className="mt-6 pt-4 border-t border-[#D4AF37]/30 flex items-center justify-between text-xs text-[#C2CFC8]">
                 <span className="lang-en-only">Available in reserve</span>
-                <span className="lang-bn-only">সংরক্ষিত স্থিত স্থিতি</span>
+                <span className="lang-bn-only">সংরক্ষিত</span>
                 <span className="text-[#E8C85A] font-bold">
                   {balancePercentage.toFixed(1)}%
                 </span>
