@@ -46,7 +46,7 @@ export default function WelfareFundSection({ data }: WelfareFundSectionProps) {
   const totalExpense = Number(data?.totalExpense) || 0;
   const currentBalance = totalCollection - totalExpense;
 
-  // Percentage calculations
+  // Percentage calculations for the progress bar
   const expensePercentage =
     totalCollection > 0
       ? Math.min(100, Math.max(0, (totalExpense / totalCollection) * 100))
@@ -79,103 +79,75 @@ export default function WelfareFundSection({ data }: WelfareFundSectionProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch mt-8">
           {/* Card 1: Total Fund Collected (Blue/Gold theme) */}
           <ScrollReveal delay={0.1}>
-            <div className="h-full rounded-2xl glass-panel p-6 sm:p-8 flex flex-col justify-between border border-[#D4AF37]/30 bg-[#0B1B3D]/80 hover:bg-[#132B5E]/85 transition-all duration-300 shadow-xl group">
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-14 h-14 rounded-2xl bg-[#0B1B3D] border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] shadow-inner group-hover:scale-105 transition-transform">
-                    <Coins size={28} />
-                  </div>
-                  <span className="text-xs px-3 py-1 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/40 font-medium">
-                    <span className="lang-en-only">Total Collection</span>
-                    <span className="lang-bn-only">মোট প্রাপ্ত অনুদান</span>
-                  </span>
+            <div className="h-full rounded-2xl glass-panel p-6 sm:p-8 border border-[#D4AF37]/30 bg-[#0B1B3D]/80 hover:bg-[#132B5E]/85 transition-all duration-300 shadow-xl group">
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-[#0B1B3D] border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] shadow-inner group-hover:scale-105 transition-transform">
+                  <Coins size={28} />
                 </div>
-
-                <h3 className="text-sm sm:text-base font-medium text-[#C2CFC8] mb-2">
-                  <span className="lang-en-only">Total Fund Collected</span>
-                  <span className="lang-bn-only">সর্বমোট প্রাপ্ত অনুদান</span>
-                </h3>
-
-                <div className="text-2xl sm:text-3xl lg:text-4xl text-[#D4AF37] font-heading drop-shadow-md">
-                  <CountUpNumber value={totalCollection} />
-                </div>
+                <span className="text-xs px-3 py-1 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/40 font-medium">
+                  <span className="lang-en-only">Total Collection</span>
+                  <span className="lang-bn-only">মোট প্রাপ্ত অনুদান</span>
+                </span>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-[#94A59B]">
-                <span className="lang-en-only">All batches & contributors</span>
-                <span className="lang-bn-only">সকল সদস্য</span>
-                <span className="text-[#D4AF37] font-semibold">100%</span>
+              <h3 className="text-sm sm:text-base font-medium text-[#C2CFC8] mb-2">
+                <span className="lang-en-only">Total Fund Collected</span>
+                <span className="lang-bn-only">সর্বমোট প্রাপ্ত অনুদান</span>
+              </h3>
+
+              <div className="text-2xl sm:text-3xl lg:text-4xl text-[#D4AF37] font-heading drop-shadow-md">
+                <CountUpNumber value={totalCollection} />
               </div>
             </div>
           </ScrollReveal>
 
           {/* Card 2: Total Expenses (Red/Gold theme) */}
           <ScrollReveal delay={0.2}>
-            <div className="h-full rounded-2xl glass-panel p-6 sm:p-8 flex flex-col justify-between border border-[#f42a41]/40 bg-[#0B1B3D]/80 hover:bg-[#132B5E]/85 transition-all duration-300 shadow-xl group">
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-14 h-14 rounded-2xl bg-[#060E1F] border border-[#f42a41]/50 flex items-center justify-center text-[#f42a41] shadow-inner group-hover:scale-105 transition-transform">
-                    <Receipt size={28} />
-                  </div>
-                  <span className="text-xs px-3 py-1 rounded-full bg-[#f42a41]/15 text-[#f42a41] border border-[#f42a41]/40 font-medium">
-                    <span className="lang-en-only">Disbursed</span>
-                    <span className="lang-bn-only">মোট ব্যয়</span>
-                  </span>
+            <div className="h-full rounded-2xl glass-panel p-6 sm:p-8 border border-[#f42a41]/40 bg-[#0B1B3D]/80 hover:bg-[#132B5E]/85 transition-all duration-300 shadow-xl group">
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-[#060E1F] border border-[#f42a41]/50 flex items-center justify-center text-[#f42a41] shadow-inner group-hover:scale-105 transition-transform">
+                  <Receipt size={28} />
                 </div>
-
-                <h3 className="text-sm sm:text-base font-medium text-[#C2CFC8] mb-2">
-                  <span className="lang-en-only">Total Expenses</span>
-                  <span className="lang-bn-only">কল্যাণমূলক কাজে মোট ব্যয়</span>
-                </h3>
-
-                <div className="text-2xl sm:text-3xl lg:text-4xl text-[#f42a41] font-heading drop-shadow-md">
-                  <CountUpNumber value={totalExpense} />
-                </div>
+                <span className="text-xs px-3 py-1 rounded-full bg-[#f42a41]/15 text-[#f42a41] border border-[#f42a41]/40 font-medium">
+                  <span className="lang-en-only">Disbursed</span>
+                  <span className="lang-bn-only">মোট ব্যয়</span>
+                </span>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-[#94A59B]">
-                <span className="lang-en-only">Welfare & support funds</span>
-                <span className="lang-bn-only">কল্যাণ অনুদান</span>
-                <span className="text-[#f42a41] font-semibold">
-                  {expensePercentage.toFixed(1)}%
-                </span>
+              <h3 className="text-sm sm:text-base font-medium text-[#C2CFC8] mb-2">
+                <span className="lang-en-only">Total Expenses</span>
+                <span className="lang-bn-only">কল্যাণমূলক কাজে মোট ব্যয়</span>
+              </h3>
+
+              <div className="text-2xl sm:text-3xl lg:text-4xl text-[#f42a41] font-heading drop-shadow-md">
+                <CountUpNumber value={totalExpense} />
               </div>
             </div>
           </ScrollReveal>
 
           {/* Card 3: Current Balance (Emerald Green/Gold glowing theme) */}
           <ScrollReveal delay={0.3}>
-            <div className="h-full rounded-2xl p-6 sm:p-8 flex flex-col justify-between border-2 border-[#D4AF37] bg-gradient-to-br from-[#006a4e]/50 via-[#0B1B3D]/90 to-[#060E1F]/95 hover:border-[#E8C85A] transition-all duration-300 shadow-[0_0_30px_rgba(0,106,78,0.35),0_0_15px_rgba(212,175,55,0.2)] group relative overflow-hidden">
+            <div className="h-full rounded-2xl p-6 sm:p-8 border-2 border-[#D4AF37] bg-gradient-to-br from-[#006a4e]/50 via-[#0B1B3D]/90 to-[#060E1F]/95 hover:border-[#E8C85A] transition-all duration-300 shadow-[0_0_30px_rgba(0,106,78,0.35),0_0_15px_rgba(212,175,55,0.2)] group relative overflow-hidden">
               {/* Highlight decorative corner gradient */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#D4AF37]/25 to-transparent rounded-bl-full pointer-events-none" />
 
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-14 h-14 rounded-2xl bg-[#006a4e]/40 border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] shadow-lg group-hover:scale-105 transition-transform">
-                    <ShieldCheck size={30} />
-                  </div>
-                  <span className="text-xs px-3 py-1 rounded-full bg-[#006a4e]/50 text-white border border-[#D4AF37] font-semibold shadow-[0_0_10px_rgba(212,175,55,0.3)]">
-                    <span className="lang-en-only">Current Balance</span>
-                    <span className="lang-bn-only">বর্তমান তহবিল</span>
-                  </span>
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-[#006a4e]/40 border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] shadow-lg group-hover:scale-105 transition-transform">
+                  <ShieldCheck size={30} />
                 </div>
-
-                <h3 className="text-sm sm:text-base font-semibold text-[#F4F7F5] mb-2">
+                <span className="text-xs px-3 py-1 rounded-full bg-[#006a4e]/50 text-white border border-[#D4AF37] font-semibold shadow-[0_0_10px_rgba(212,175,55,0.3)]">
                   <span className="lang-en-only">Current Balance</span>
-                  <span className="lang-bn-only">বর্তমানে সংরক্ষিত তহবিল</span>
-                </h3>
-
-                <div className="text-2xl sm:text-3xl lg:text-4xl text-[#E8C85A] font-heading font-extrabold drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-                  <CountUpNumber value={currentBalance} />
-                </div>
+                  <span className="lang-bn-only">বর্তমান তহবিল</span>
+                </span>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-[#D4AF37]/30 flex items-center justify-between text-xs text-[#C2CFC8]">
-                <span className="lang-en-only">Available in reserve</span>
-                <span className="lang-bn-only">সংরক্ষিত</span>
-                <span className="text-[#E8C85A] font-bold">
-                  {balancePercentage.toFixed(1)}%
-                </span>
+              <h3 className="text-sm sm:text-base font-semibold text-[#F4F7F5] mb-2">
+                <span className="lang-en-only">Current Balance</span>
+                <span className="lang-bn-only">বর্তমানে সংরক্ষিত তহবিল</span>
+              </h3>
+
+              <div className="text-2xl sm:text-3xl lg:text-4xl text-[#E8C85A] font-heading font-extrabold drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                <CountUpNumber value={currentBalance} />
               </div>
             </div>
           </ScrollReveal>
