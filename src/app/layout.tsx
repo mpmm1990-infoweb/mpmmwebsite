@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter, Noto_Serif_Bengali } from "next/font/google";
 import { sanityFetch } from "@/sanity/client";
 import { GLOBAL_SETTINGS_QUERY } from "@/lib/queries";
+import DevSignature from "@/components/DevSignature";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -58,6 +59,8 @@ export async function generateMetadata(): Promise<Metadata> {
       "Bangladesh Police",
       "Memorial",
     ],
+    authors: [{ name: "Tanvir Kabir", url: "https://about.me/tanvir-kabir" }],
+    creator: "Tanvir Kabir",
     verification: {
       google: "iYRn2EL7DM1rLsqwBiKOiTEi7Pnup_3tVPK75x9SJ2k",
     },
@@ -101,6 +104,7 @@ export default async function RootLayout({
         )}
       </head>
       <body className="min-h-full flex flex-col antialiased overflow-x-hidden w-full max-w-full">
+        <DevSignature />
         {children}
       </body>
     </html>
