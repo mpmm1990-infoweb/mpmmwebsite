@@ -40,8 +40,7 @@ const SCHEMA_MAP = {
   ],
   kothaOGatha: [
     'name', 'nameBn', 'designation', 'designationBn', 'category', 'title',
-    'titleBn', 'content', 'contentBn', 'photo', 'email', 'isApproved',
-    'submittedAt', 'order'
+    'content', 'photo', 'email', 'isApproved', 'submittedAt', 'order'
   ],
   video: [
     'title', 'titleBn', 'youtubeUrl', 'thumbnail', 'description',

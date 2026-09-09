@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Search, BookOpen, PenTool, User, ArrowUpRight } from "lucide-react";
+import { Search, BookOpen, User, ArrowUpRight } from "lucide-react";
 import { urlFor } from "@/sanity/image";
 import ScrollReveal from "@/components/ScrollReveal";
 import KothaOGathaDetailModal, { KothaOGathaItem } from "@/components/KothaOGathaDetailModal";
@@ -20,8 +20,7 @@ const fallbackItems: KothaOGathaItem[] = [
     designationBn: "অতিরিক্ত ডিআইজি (অবসরপ্রাপ্ত)",
     category: "poem",
     title: "১৯৯০ এর শপথ গাথা",
-    titleBn: "১৯৯০ এর শপথ গাথা",
-    contentBn: `সেদিন সকালে রাজপথে দাঁড়িয়ে
+    content: `সেদিন সকালে রাজপথে দাঁড়িয়ে
 শপথ নিয়েছিলাম দেশমাতার নামে,
 রক্তে আগুন, চোখে আগামীর স্বপ্ন,
 আইন ও ন্যায়ের পতাকা উড়াবো প্রতিটি গ্রামে।
@@ -30,7 +29,6 @@ const fallbackItems: KothaOGathaItem[] = [
 স্মৃতির জাদুঘরে ফিরে পাই পুরোনো সেই সাথী,
 ১৯৯০ ব্যাচ ইতিহাস হয়ে রবে,
 দেশপ্রেমের নিভে যাওয়া প্রদীপে জ্বালিয়ে বাতি।`,
-    content: "Our Oath of 1990 — A poem dedicated to the brave officers of 1990.",
   },
   {
     _id: "kg2",
@@ -40,9 +38,7 @@ const fallbackItems: KothaOGathaItem[] = [
     designationBn: "পুলিশ সুপার (অবসরপ্রাপ্ত)",
     category: "story",
     title: "কুয়াশা ঘেরা এক রাত্রির ডিউটি",
-    titleBn: "কুয়াশা ঘেরা এক রাত্রির ডিউটি",
-    contentBn: `১৯৯৫ সালের এক শীতের রাত। যমুনার পাড়ে ঘন কুয়াশায় ঢেকে আছে চারিদিক। আমরা খবর পেলাম সীমান্ত পার হয়ে একদল অপরাধী ঢুকছে। জীবনের ঝুঁকি নিয়ে আমরা ধাওয়া করেছিলাম। সকালে যখন অপারেশন শেষ হলো, সহকর্মীদের হাসিমুখ দেখে বুঝেছিলাম—দেশের সেবা করার চেয়ে বড় কোনো প্রাপ্তি নেই।`,
-    content: "A foggy winter night's duty on the banks of Jamuna river during 1995 operations.",
+    content: `১৯৯৫ সালের এক শীতের রাত। যমুনার পাড়ে ঘন কুয়াশায় ঢেকে আছে চারিদিক। আমরা খবর পেলাম সীমান্ত পার হয়ে একদল অপরাধী ঢুকছে। জীবনের ঝুঁকি নিয়ে আমরা ধাওয়া করেছিলাম। সকালে যখন অপারেশন শেষ হলো, সহকর্মীদের হাসিমুখ দেখে বুঝেছিলাম—দেশের সেবা করার চেয়ে বড় কোনো প্রাপ্তি নেই।`,
   },
   {
     _id: "kg3",
@@ -52,9 +48,7 @@ const fallbackItems: KothaOGathaItem[] = [
     designationBn: "কমান্ড্যান্ট (অবসরপ্রাপ্ত)",
     category: "reminiscence",
     title: "শারদা একাদেমির সেই দিনগুলো",
-    titleBn: "শারদা একাদেমির সেই দিনগুলো",
-    contentBn: `শারদা সারদা একাডেমির সুবর্ণ রোদ, ভোরে বিগলের সুর আর প্যারেডের তালে তালে হাজারো বুটের শব্দ। সেখানে যে বন্ধুত্বের ভিত্তি তৈরি হয়েছিল, তা দীর্ঘ ৩৫ বছর পরও অটুট। আমরা শুধু সহকর্মী ছিলাম না, ছিলাম এক পরিবারের ভাই।`,
-    content: "Reminiscence of training days at Sharda Police Academy in 1990.",
+    content: `শারদা সারদা একাডেমির সুবর্ণ রোদ, ভোরে বিগলের সুর আর প্যারেডের তালে তালে হাজারো বুটের শব্দ। সেখানে যে বন্ধুত্বের ভিত্তি তৈরি হয়েছিল, তা দীর্ঘ ৩৫ বছর পরও অটুট। আমরা শুধু সহকর্মী ছিলাম না, ছিলাম এক পরিবারের ভাই।`,
   },
   {
     _id: "kg4",
@@ -64,12 +58,10 @@ const fallbackItems: KothaOGathaItem[] = [
     designationBn: "উপ-পুলিশ কমিশনার",
     category: "poem",
     title: "স্মৃতির মিনার",
-    titleBn: "স্মৃতির মিনার",
-    contentBn: `স্যালুট জানাই তোমারে ভাই, হারিয়ে গেছ যারা,
+    content: `স্যালুট জানাই তোমারে ভাই, হারিয়ে গেছ যারা,
 স্মৃতির আকাশে তোমরা আজ জ্বলজ্বলে এক তারা।
 ডিউটির মাঠে ক্লান্তি ভুলে দিয়েছ জীবন বলি,
 তোমাদের পথ ধরেই আজও আমরা সম্মুখে চলি।`,
-    content: "A memorial poem honoring the fallen heroes of 1990 First Batch.",
   },
 ];
 
@@ -97,9 +89,8 @@ export default function MembersClient({ items }: MembersClientProps) {
     const nameMatch = item.name?.toLowerCase().includes(term);
     const nameBnMatch = item.nameBn?.toLowerCase().includes(term);
     const titleMatch = item.title?.toLowerCase().includes(term);
-    const titleBnMatch = item.titleBn?.toLowerCase().includes(term);
 
-    return nameMatch || nameBnMatch || titleMatch || titleBnMatch;
+    return nameMatch || nameBnMatch || titleMatch;
   });
 
   return (
@@ -191,12 +182,13 @@ export default function MembersClient({ items }: MembersClientProps) {
                       </div>
                     </div>
 
+                    {/* Title — Unilingual as typed by author */}
                     <h3 className="text-white font-bold text-lg sm:text-xl font-heading leading-snug line-clamp-2 group-hover:text-[#D4AF37] transition-colors">
-                      <span className="lang-bn-only">{item.titleBn || item.title}</span>
-                      <span className="lang-en-only">{item.title || item.titleBn}</span>
+                      {item.title}
                     </h3>
                   </div>
 
+                  {/* Author Info — Bilingual */}
                   <div className="mt-6 pt-4 border-t border-white/10 flex items-center gap-3">
                     {item.photo?.asset ? (
                       <div className="w-10 h-10 rounded-full overflow-hidden relative border border-[#D4AF37]/50 shrink-0">

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, BookOpen, User, Feather } from "lucide-react";
+import { X, User, Feather } from "lucide-react";
 import { urlFor } from "@/sanity/image";
 
 export interface KothaOGathaItem {
@@ -13,9 +13,7 @@ export interface KothaOGathaItem {
   designationBn?: string;
   category?: string;
   title?: string;
-  titleBn?: string;
   content?: string;
-  contentBn?: string;
   photo?: { asset: { _ref: string } };
 }
 
@@ -75,12 +73,12 @@ export default function KothaOGathaDetailModal({
               </span>
             </div>
 
+            {/* Unilingual Title — Rendered exactly as the author wrote it */}
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white font-heading leading-snug pr-8">
-              <span className="lang-bn-only">{item.titleBn || item.title}</span>
-              <span className="lang-en-only">{item.title || item.titleBn}</span>
+              {item.title}
             </h2>
 
-            {/* Author Meta */}
+            {/* Author Meta — Bilingual */}
             <div className="flex items-center gap-3 mt-4 pt-3 border-t border-white/10">
               {item.photo?.asset ? (
                 <div className="w-11 h-11 rounded-full overflow-hidden relative border border-[#D4AF37]/50 shrink-0">
@@ -109,10 +107,9 @@ export default function KothaOGathaDetailModal({
             </div>
           </div>
 
-          {/* Full Content Body */}
+          {/* Full Content Body — Unilingual single field */}
           <div className="p-5 sm:p-8 overflow-y-auto flex-1 text-white/95 leading-relaxed font-heading whitespace-pre-wrap text-base sm:text-lg">
-            <span className="lang-bn-only">{item.contentBn || item.content}</span>
-            <span className="lang-en-only">{item.content || item.contentBn}</span>
+            {item.content}
           </div>
 
           {/* Footer Accent */}

@@ -176,9 +176,7 @@ export const KOTHA_O_GATHA_QUERY = `*[_type == "kothaOGatha" && isApproved != fa
   designationBn,
   category,
   title,
-  titleBn,
   content,
-  contentBn,
   photo,
   submittedAt,
   order
@@ -192,9 +190,7 @@ export const KOTHA_O_GATHA_PREVIEW_QUERY = `*[_type == "kothaOGatha" && isApprov
   designationBn,
   category,
   title,
-  titleBn,
   content,
-  contentBn,
   photo
 }`;
 
