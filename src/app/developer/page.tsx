@@ -1,4 +1,5 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Developer — Modern Police Memorial Museum",
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 export default function DeveloperPage() {
   return (
     <main className="min-h-screen bg-[#060E1F] flex items-center justify-center px-4 py-16">
-      {/* Subtle background glow */}
+      {/* Subtle background glows */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#006a4e]/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-[#D4AF37]/8 rounded-full blur-3xl pointer-events-none" />
 
@@ -26,9 +27,21 @@ export default function DeveloperPage() {
         <div className="h-[3px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
 
         <div className="p-10 sm:p-12 flex flex-col items-center text-center gap-6">
-          {/* Emblem */}
-          <div className="w-16 h-16 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center shadow-[0_0_20px_rgba(212,175,55,0.2)]">
-            <span className="text-3xl select-none" aria-hidden="true">🇧🇩</span>
+
+          {/* Permanent Developer Photo */}
+          <div className="relative">
+            {/* Outer glow ring */}
+            <div className="absolute inset-0 rounded-full bg-[#D4AF37]/20 blur-xl scale-125 pointer-events-none" />
+            <div className="relative w-20 h-20 rounded-full border-2 border-[#D4AF37]/70 shadow-[0_0_24px_rgba(212,175,55,0.4)] overflow-hidden bg-[#0B1B3D]">
+              <Image
+                src="/developer.jpg"
+                alt="Tanvir Kabir — Full-Stack Developer"
+                width={80}
+                height={80}
+                className="w-full h-full object-cover rounded-full"
+                priority
+              />
+            </div>
           </div>
 
           {/* Gold divider */}
@@ -55,6 +68,10 @@ export default function DeveloperPage() {
           {/* Details grid */}
           <div className="w-full mt-2 grid grid-cols-1 gap-3">
             <div className="flex items-start gap-3 p-4 rounded-2xl bg-[#060E1F]/70 border border-[#D4AF37]/15 text-left">
+              <span className="text-[#D4AF37] text-xs font-mono font-bold uppercase tracking-widest shrink-0 pt-0.5 w-24">Role</span>
+              <span className="text-white/80 text-sm leading-relaxed">Full-Stack Developer &amp; Project Architect</span>
+            </div>
+            <div className="flex items-start gap-3 p-4 rounded-2xl bg-[#060E1F]/70 border border-[#D4AF37]/15 text-left">
               <span className="text-[#D4AF37] text-xs font-mono font-bold uppercase tracking-widest shrink-0 pt-0.5 w-24">Project</span>
               <span className="text-white/80 text-sm leading-relaxed">Modern Police Memorial Museum — First Batch 1990</span>
             </div>
@@ -64,7 +81,7 @@ export default function DeveloperPage() {
             </div>
             <div className="flex items-start gap-3 p-4 rounded-2xl bg-[#060E1F]/70 border border-[#D4AF37]/15 text-left">
               <span className="text-[#D4AF37] text-xs font-mono font-bold uppercase tracking-widest shrink-0 pt-0.5 w-24">Year</span>
-              <span className="text-white/80 text-sm leading-relaxed">2025 – 2026</span>
+              <span className="text-white/80 text-sm leading-relaxed">2026</span>
             </div>
           </div>
 
@@ -82,3 +99,4 @@ export default function DeveloperPage() {
     </main>
   );
 }
+
