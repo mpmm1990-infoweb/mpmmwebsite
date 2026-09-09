@@ -6,9 +6,6 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { bookTitle, bookTitleBn, bookSlug, email, phone, paymentMethod, paymentRef, amount } = body;
 
-    console.log("--------------------------------------------------");
-    console.log("📨 RECEIVING PURCHASE RECORD SUBMISSION:");
-    console.log({ bookTitle, bookSlug, email, phone, paymentMethod, paymentRef, amount });
 
     // ── 1. Validation ────────────────────────────────────────────────────────
     if (!bookTitle || !email || !phone || !paymentMethod || !paymentRef || !amount) {
@@ -55,7 +52,6 @@ export async function POST(request: Request) {
 
     // ── 4. Nodemailer Execution ──────────────────────────────────────────────
     if (user && pass) {
-      console.log(`✉️ Transporter connecting to ${smtpHost}:${port} as ${user}...`);
 
       const transporter = nodemailer.createTransport({
         host: smtpHost,
@@ -249,10 +245,8 @@ export async function POST(request: Request) {
         transporter.sendMail(adminMailOptions),
       ]);
 
-      console.log("✅ Purchase notification emails sent successfully to user and admin.");
     } else {
       console.warn("⚠️ EMAIL_USER / EMAIL_PASS or SMTP_USER / SMTP_PASS environment variables are missing!");
-      console.log("ℹ️ [MOCK EMAIL MODE ACTIVATED] Magic Approve URL:", approveUrl);
     }
 
     return NextResponse.json({

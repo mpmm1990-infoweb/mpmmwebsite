@@ -89,7 +89,6 @@ export async function GET(request: Request) {
 
     // Fallback: If direct query missed (due to spacing/case/hyphen differences), scan all books
     if (!book) {
-      console.log(`ℹ️ Direct GROQ match missed for "${bookSlug}". Executing fallback list scan...`);
       const allBooksQuery = `*[(_type == "book" || _type == "digitalLibrary")]{
         _id,
         title,
@@ -224,7 +223,6 @@ export async function GET(request: Request) {
       };
 
       await transporter.sendMail(customerMailOptions);
-      console.log(`✅ Magic Link PDF Delivery successful to ${email} for book "${bookTitle}" using link: ${finalDownloadLink}`);
     } else {
       console.warn("⚠️ SMTP credentials not found. PDF delivery mock log:", { email, finalDownloadLink });
     }

@@ -151,7 +151,7 @@ export default function KothaOGathaMarquee({ items }: KothaOGathaMarqueeProps) {
           onDragStart={() => {
             isDragging.current = true;
           }}
-          onDrag={(_, info) => {
+          onDrag={() => {
             handleDrag();
           }}
           onDragEnd={() => {

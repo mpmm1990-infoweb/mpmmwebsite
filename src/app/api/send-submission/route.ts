@@ -107,16 +107,8 @@ export async function POST(request: Request) {
         transporter.sendMail(userMailOptions),
         transporter.sendMail(adminMailOptions),
       ]);
-    } else {
-      console.log("Nodemailer API received Kotha & Gatha submission (Mock mode active):", {
-        name,
-        designation,
-        email,
-        category,
-        title,
-        content,
-      });
     }
+    // else: SMTP credentials not configured — submission received but not emailed
 
     return NextResponse.json({
       success: true,
